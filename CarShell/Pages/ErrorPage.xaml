@@ -1,0 +1,118 @@
+﻿<UserControl x:Class="CarShell.Pages.ErrorPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#05080D">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="220"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Content="←"
+                    Width="64"
+                    Height="56"
+                    FontSize="30"
+                    Click="Back_Click"
+                    Background="#111923"
+                    Foreground="White"
+                    BorderBrush="#27384A"/>
+
+            <TextBlock Grid.Column="1"
+                       Text="Ошибки автомобиля"
+                       FontSize="34"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       VerticalAlignment="Center"
+                       Margin="20,0,0,0"/>
+        </Grid>
+
+        <UniformGrid Grid.Row="1" Columns="4" Rows="2">
+            <Button Margin="8" Click="Ecu_Click" Background="#1B1F26" BorderBrush="#FFB000" BorderThickness="2">
+                <StackPanel>
+                    <TextBlock Text="🟡" FontSize="34" HorizontalAlignment="Center"/>
+                    <TextBlock Text="ECU" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                    <TextBlock Text="2 ошибки" FontSize="18" Foreground="#FFB000" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Margin="8" Click="Abs_Click" Background="#1B1F26" BorderBrush="#2ECC71" BorderThickness="2">
+                <StackPanel>
+                    <TextBlock Text="🟢" FontSize="34" HorizontalAlignment="Center"/>
+                    <TextBlock Text="ABS" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                    <TextBlock Text="0" FontSize="18" Foreground="#2ECC71" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Margin="8" Click="Uec_Click" Background="#1B1F26" BorderBrush="#FFB000" BorderThickness="2">
+                <StackPanel>
+                    <TextBlock Text="🟡" FontSize="34" HorizontalAlignment="Center"/>
+                    <TextBlock Text="UEC" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                    <TextBlock Text="1 ошибка" FontSize="18" Foreground="#FFB000" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Margin="8" Click="Rec_Click" Background="#1B1F26" BorderBrush="#2ECC71" BorderThickness="2">
+                <StackPanel>
+                    <TextBlock Text="🟢" FontSize="34" HorizontalAlignment="Center"/>
+                    <TextBlock Text="REC" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                    <TextBlock Text="0" FontSize="18" Foreground="#2ECC71" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Margin="8" Click="Cim_Click" Background="#1B1F26" BorderBrush="#2ECC71" BorderThickness="2">
+                <StackPanel>
+                    <TextBlock Text="🟢" FontSize="34" HorizontalAlignment="Center"/>
+                    <TextBlock Text="CIM" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                    <TextBlock Text="0" FontSize="18" Foreground="#2ECC71" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Margin="8" Click="Ipc_Click" Background="#1B1F26" BorderBrush="#2ECC71" BorderThickness="2">
+                <StackPanel>
+                    <TextBlock Text="🟢" FontSize="34" HorizontalAlignment="Center"/>
+                    <TextBlock Text="IPC" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                    <TextBlock Text="0" FontSize="18" Foreground="#2ECC71" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Margin="8" Click="Ddm_Click" Background="#1B1F26" BorderBrush="#777" BorderThickness="2">
+                <StackPanel>
+                    <TextBlock Text="⚫" FontSize="34" HorizontalAlignment="Center"/>
+                    <TextBlock Text="DDM" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                    <TextBlock Text="нет связи" FontSize="18" Foreground="#AAAAAA" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Margin="8" Click="Pdm_Click" Background="#1B1F26" BorderBrush="#2ECC71" BorderThickness="2">
+                <StackPanel>
+                    <TextBlock Text="🟢" FontSize="34" HorizontalAlignment="Center"/>
+                    <TextBlock Text="PDM" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                    <TextBlock Text="0" FontSize="18" Foreground="#2ECC71" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </UniformGrid>
+
+        <Border Grid.Row="2"
+                Background="#10151B"
+                BorderBrush="#1C2A38"
+                BorderThickness="2"
+                CornerRadius="18"
+                Padding="20"
+                Margin="0,20,0,0">
+
+            <ListBox x:Name="ErrorList"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Foreground="White"
+                     FontSize="24"/>
+        </Border>
+    </Grid>
+</UserControl>
