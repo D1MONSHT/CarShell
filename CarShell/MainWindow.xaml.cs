@@ -68,9 +68,9 @@ namespace CarShell
         private void Board_Click(object sender, RoutedEventArgs e) => ShowBoard();
         private void Error_Click(object sender, RoutedEventArgs e) => ShowError();
         private void CheckEngineButton_Click(object sender, RoutedEventArgs e)
-        {
-            ShowError();
-        }
+{
+    ShowError();
+}
 
         private async void PlayPause_Click(object sender, RoutedEventArgs e)
         {
