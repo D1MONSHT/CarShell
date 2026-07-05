@@ -28,21 +28,37 @@
                            Margin="20,0,0,0"/>
 
                 <TextBox x:Name="SearchBox"
-                         Margin="70,0,60,0"
-                         VerticalAlignment="Center"
-                         FontSize="22"
-                         Foreground="White"
-                         Background="Transparent"
-                         BorderThickness="0"
-                         Text="Поиск места"/>
+         Margin="70,0,20,0"
+         VerticalAlignment="Center"
+         FontSize="22"
+         Foreground="White"
+         Background="Transparent"
+         BorderThickness="0"
+         Text="Поиск места"
+         TextChanged="SearchBox_TextChanged"
+         KeyDown="SearchBox_KeyDown"/>
 
-                <TextBlock Text="🎙"
-                           FontSize="28"
-                           Foreground="White"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center"
-                           Margin="0,0,20,0"/>
+                
             </Grid>
+        </Border>
+        <Border x:Name="SuggestionsPanel"
+        Width="430"
+        MaxHeight="300"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Top"
+        Margin="26,96,0,0"
+        Background="#EE091018"
+        BorderBrush="#24384F"
+        BorderThickness="1"
+        CornerRadius="16"
+        Visibility="Collapsed">
+
+            <ListBox x:Name="SuggestionsList"
+             Background="Transparent"
+             BorderThickness="0"
+             Foreground="White"
+             FontSize="18"
+             SelectionChanged="SuggestionsList_SelectionChanged"/>
         </Border>
 
         <!-- Выезжающая панель быстрых мест -->
@@ -113,13 +129,15 @@
         </StackPanel>
 
         <!-- Нижняя панель подсказок, низкая -->
-        <Border Height="115"
+        <Border  x:Name="RoutePanel"
+            Height="115"
                 VerticalAlignment="Bottom"
                 Margin="26,0,26,120"
                 Background="#E6091018"
                 BorderBrush="#24384F"
                 BorderThickness="1"
-                CornerRadius="20">
+                CornerRadius="20"
+                Visibility="Collapsed">
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -130,16 +148,20 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel VerticalAlignment="Center" Margin="25,0">
-                    <TextBlock Text="12 мин"
-                               FontSize="24"
-                               FontWeight="Bold"
-                               Foreground="#168CFF"/>
-                    <TextBlock Text="7.4 км · 19:38"
-                               FontSize="18"
-                               Foreground="#AAB3C2"/>
+                    <TextBlock x:Name="RouteTimeText"
+           Text="-- мин"
+           FontSize="24"
+           FontWeight="Bold"
+           Foreground="#168CFF"/>
+
+                    <TextBlock x:Name="RouteDistanceText"
+           Text="-- км"
+           FontSize="18"
+           Foreground="#AAB3C2"/>
                     <Button Content="Отмена"
-                            Height="32"
-                            Margin="0,8,0,0"/>
+                               Height="32"
+                               Margin="0,8,0,0"
+                               Click="CancelRoute_Click"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1"
@@ -150,16 +172,21 @@
                                Foreground="White"
                                Margin="0,0,20,0"/>
                     <StackPanel>
-                        <TextBlock Text="250 м"
-                                   FontSize="22"
-                                   FontWeight="Bold"
-                                   Foreground="White"/>
-                        <TextBlock Text="Поверните направо"
-                                   FontSize="18"
-                                   Foreground="#C9D0DA"/>
-                        <TextBlock Text="на ул. Warszawska"
-                                   FontSize="18"
-                                   Foreground="#C9D0DA"/>
+                        <TextBlock x:Name="NextDistanceText"
+           Text="-- м"
+           FontSize="22"
+           FontWeight="Bold"
+           Foreground="White"/>
+
+                        <TextBlock x:Name="NextInstructionText"
+           Text="Маршрут построен"
+           FontSize="18"
+           Foreground="#C9D0DA"/>
+
+                        <TextBlock x:Name="NextStreetText"
+           Text=""
+           FontSize="18"
+           Foreground="#C9D0DA"/>
                     </StackPanel>
                 </StackPanel>
 
