@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using CarShell.Services;
@@ -9,6 +11,7 @@ namespace CarShell.Pages
     {
         private readonly MainWindow mainWindow;
         private UpdateInfo? latestUpdate;
+        private string? downloadedZipPath;
 
         public UpdatePage(MainWindow mainWindow)
         {
@@ -35,6 +38,7 @@ namespace CarShell.Pages
 
                 var update = await UpdateService.CheckAsync();
                 latestUpdate = update;
+                downloadedZipPath = null;
 
                 LatestVersionText.Text = $"Последняя версия: {update.Version}";
                 NotesText.Text = string.IsNullOrWhiteSpace(update.Notes)
@@ -74,6 +78,7 @@ namespace CarShell.Pages
                 InstallButton.IsEnabled = false;
 
                 string path = await UpdateService.DownloadAsync(latestUpdate.DownloadUrl);
+                downloadedZipPath = path;
 
                 StatusText.Text = $"🟢 Обновление скачано:\n{path}";
                 InstallButton.IsEnabled = true;
@@ -83,6 +88,41 @@ namespace CarShell.Pages
                 StatusText.Text = "🔴 Ошибка скачивания";
                 NotesText.Text = ex.Message;
                 DownloadButton.IsEnabled = true;
+            }
+        }
+
+        private void InstallUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(downloadedZipPath) || !File.Exists(downloadedZipPath))
+                {
+                    StatusText.Text = "🔴 Файл обновления не найден";
+                    return;
+                }
+
+                string appDir = AppDomain.CurrentDomain.BaseDirectory;
+                string updaterPath = Path.Combine(appDir, "Updater.exe");
+
+                if (!File.Exists(updaterPath))
+                {
+                    StatusText.Text = "🔴 Updater.exe не найден";
+                    return;
+                }
+
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = updaterPath,
+                    Arguments = $"\"{downloadedZipPath}\" \"{appDir}\" \"CarShell.exe\"",
+                    UseShellExecute = true
+                });
+
+                Application.Current.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                StatusText.Text = "🔴 Ошибка установки";
+                NotesText.Text = ex.Message;
             }
         }
     }
