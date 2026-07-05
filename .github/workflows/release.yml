@@ -13,7 +13,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup .NET 8
@@ -24,7 +24,7 @@ jobs:
       - name: Restore
         run: dotnet restore CarShell.sln
 
-      - name: Publish win-x64
+      - name: Publish CarShell
         run: >
           dotnet publish CarShell/CarShell.csproj
           -c Release
@@ -34,18 +34,24 @@ jobs:
           /p:PublishSingleFile=true
           /p:IncludeNativeLibrariesForSelfExtract=true
           /p:EnableCompressionInSingleFile=true
+          /p:DebugType=None
+          /p:DebugSymbols=false
 
-      - name: Create ZIP
+      - name: Create ZIP for updater
         shell: pwsh
-        run: Compress-Archive -Path publish\* -DestinationPath CarShell-win-x64.zip -Force
+        run: |
+          if (Test-Path "CarShell-win-x64.zip") {
+            Remove-Item "CarShell-win-x64.zip" -Force
+          }
+          Compress-Archive -Path publish\* -DestinationPath CarShell-win-x64.zip -Force
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: CarShell-win-x64.zip
           name: CarShell ${{ github.ref_name }}
           body: |
             Автоматическая сборка CarShell.
 
             Файл для обновления:
             CarShell-win-x64.zip
+          files: CarShell-win-x64.zip
