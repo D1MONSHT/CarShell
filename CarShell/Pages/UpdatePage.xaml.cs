@@ -87,6 +87,44 @@ namespace CarShell.Pages
                 NotesText.Text = ex.Message;
                 DownloadButton.IsEnabled = true;
             }
+            {
+                try
+                {
+                    if (string.IsNullOrWhiteSpace(downloadedZipPath) || !File.Exists(downloadedZipPath))
+                    {
+                        StatusText.Text = "🔴 Файл обновления не найден";
+                        return;
+                    }
+
+                    string appDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\');
+                    string updaterPath = Path.Combine(appDir, "Updater.exe");
+
+                    if (!File.Exists(updaterPath))
+                    {
+                        StatusText.Text = "🔴 Не найден Updater.exe";
+                        return;
+                    }
+
+                    var psi = new ProcessStartInfo
+                    {
+                        FileName = updaterPath,
+                        WorkingDirectory = appDir,
+                        UseShellExecute = true
+                    };
+
+                    psi.ArgumentList.Add(appDir);
+                    psi.ArgumentList.Add(downloadedZipPath);
+
+                    Process.Start(psi);
+
+                    Application.Current.Shutdown();
+                }
+                catch (Exception ex)
+                {
+                    StatusText.Text = "🔴 Ошибка установки";
+                    NotesText.Text = ex.Message;
+                }
+            }
         }
 
         private void InstallUpdate_Click(object sender, RoutedEventArgs e)
