@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using CarShell.Services;
+
 namespace CarShell.Pages
 {
     public partial class SettingsPage : UserControl
@@ -13,30 +13,9 @@ namespace CarShell.Pages
             main = mainWindow;
         }
 
-        private async void CheckUpdate_Click(object sender, RoutedEventArgs e)
+        private void Back_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                var update = await UpdateService.CheckAsync();
-
-                if (!update.HasUpdate)
-                {
-                    MessageBox.Show(
-                        $"Установлена последняя версия: {VersionInfo.Version}",
-                        "Обновление");
-                    return;
-                }
-
-                MessageBox.Show(
-                    $"Доступна новая версия: {update.Version}\n\n{update.Notes}",
-                    "Обновление найдено");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    "Ошибка проверки обновлений:\n" + ex.Message,
-                    "Ошибка");
-            }
+            main.ShowHome();
         }
     }
 }
