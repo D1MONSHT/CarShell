@@ -25,6 +25,9 @@ namespace CarShell.Pages
         private readonly double carLat = 50.0413;
         private readonly double carLon = 21.9990;
 
+        //private double carHeading = 0;
+        //private bool followCar = true;
+
         private static readonly HttpClient http = new HttpClient();
         private static bool userAgentAdded = false;
 
@@ -78,7 +81,6 @@ namespace CarShell.Pages
         private void InitMap()
         {
             Map.Map = new Mapsui.Map();
-
             Map.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
 
             AddCarMarker(carLat, carLon);
@@ -99,9 +101,10 @@ namespace CarShell.Pages
 
             feature.Styles.Add(new SymbolStyle
             {
-                SymbolScale = 1.3,
+                SymbolType = SymbolType.Ellipse,
+                SymbolScale = 1.6,
                 Fill = new Brush(Color.FromString("#168CFF")),
-                Outline = new Pen(Color.White, 2)
+                Outline = new Pen(Color.White, 3)
             });
 
             carLayer = new MemoryLayer
@@ -118,6 +121,9 @@ namespace CarShell.Pages
         {
             if (QuickPanel != null)
                 QuickPanel.Visibility = Visibility.Visible;
+
+            if (SuggestionsPanel != null)
+                SuggestionsPanel.Visibility = Visibility.Collapsed;
 
             if (SearchBox.Text == "Поиск места")
                 SearchBox.Text = "";
@@ -485,6 +491,8 @@ namespace CarShell.Pages
 
         private void MyLocation_Click(object sender, RoutedEventArgs e)
         {
+           // followCar = true;
+
             var center = SphericalMercator.FromLonLat(carLon, carLat);
             Map.Map.Navigator.CenterOn(center.x, center.y);
             Map.Map.Navigator.ZoomTo(200);

@@ -54,11 +54,26 @@
         Visibility="Collapsed">
 
             <ListBox x:Name="SuggestionsList"
-             Background="Transparent"
-             BorderThickness="0"
-             Foreground="White"
-             FontSize="18"
-             SelectionChanged="SuggestionsList_SelectionChanged"/>
+         Background="Transparent"
+         BorderThickness="0"
+         Foreground="White"
+         FontSize="18"
+         SelectionChanged="SuggestionsList_SelectionChanged">
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="14" BorderBrush="#1C2A38" BorderThickness="0,0,0,1">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📍" FontSize="22" Margin="0,0,12,0"/>
+                                <TextBlock Text="{Binding DisplayName}"
+                               TextWrapping="Wrap"
+                               Foreground="White"
+                               FontSize="17"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Border>
 
         <!-- Выезжающая панель быстрых мест -->
