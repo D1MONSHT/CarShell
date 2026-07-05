@@ -61,22 +61,15 @@
         Click="CheckUpdate_Click"/>
 
                     <Button x:Name="DownloadButton"
-        Content="Скачать"
-        Width="190"
+        Content="Скачать и установить"
+        Width="260"
         Height="60"
         FontSize="24"
         Margin="20,0,0,0"
         Click="DownloadUpdate_Click"
         IsEnabled="False"/>
 
-                    <Button x:Name="InstallButton"
-        Content="Установить"
-        Width="190"
-        Height="60"
-        FontSize="24"
-        Margin="20,0,0,0"
-        Click="InstallUpdate_Click"
-        IsEnabled="False"/>
+                   
                 </StackPanel>
             </StackPanel>
         </Border>
