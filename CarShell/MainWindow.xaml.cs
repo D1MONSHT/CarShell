@@ -31,7 +31,7 @@ namespace CarShell
 
         public void ShowUpdate()
         {
-            MainContent.Content = updatePage;
+            MainContent.Content = updatePage; 
         }
         public void ShowHome()
         {
