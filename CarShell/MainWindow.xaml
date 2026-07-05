@@ -8,7 +8,7 @@
         Background="#05080D">
 
     <Window.Resources>
-        <Style x:Key="SideButton" TargetType="Button">
+        <Style x:Key="SideButton" TargetType="Button"> 
             <Setter Property="Width" Value="76"/>
             <Setter Property="Height" Value="76"/>
             <Setter Property="Margin" Value="12,10"/>
