@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 using NtsPoint = NetTopologySuite.Geometries.Point;
 using NtsLineString = NetTopologySuite.Geometries.LineString;
@@ -22,11 +23,8 @@ namespace CarShell.Pages
 {
     public partial class MapsPage : UserControl
     {
-        private readonly double carLat = 50.0413;
-        private readonly double carLon = 21.9990;
-
-        //private double carHeading = 0;
-        //private bool followCar = true;
+        private readonly double carLat = 50.5004580;
+        private readonly double carLon = 21.5392720;
 
         private static readonly HttpClient http = new HttpClient();
         private static bool userAgentAdded = false;
@@ -37,6 +35,11 @@ namespace CarShell.Pages
 
         private bool ignoreSearchTextChanged = false;
         private List<SearchPlace> currentSuggestions = new List<SearchPlace>();
+
+        private DispatcherTimer navTimer;
+        private List<NtsCoordinate> activeRoutePoints = new List<NtsCoordinate>();
+        private int navIndex = 0;
+        private bool followCar = true;
 
         private class SearchPlace
         {
@@ -69,6 +72,10 @@ namespace CarShell.Pages
                 catch { }
             }
 
+            navTimer = new DispatcherTimer();
+            navTimer.Interval = TimeSpan.FromMilliseconds(700);
+            navTimer.Tick += NavTimer_Tick;
+
             Loaded += MapsPage_Loaded;
             SearchBox.GotFocus += SearchBox_GotFocus;
         }
@@ -93,10 +100,20 @@ namespace CarShell.Pages
         private void AddCarMarker(double lat, double lon)
         {
             var point = SphericalMercator.FromLonLat(lon, lat);
+            UpdateCarMarker(point.x, point.y);
+        }
+
+        private void UpdateCarMarker(double x, double y)
+        {
+            if (carLayer != null)
+            {
+                Map.Map.Layers.Remove(carLayer);
+                carLayer = null;
+            }
 
             var feature = new GeometryFeature
             {
-                Geometry = new NtsPoint(point.x, point.y)
+                Geometry = new NtsPoint(x, y)
             };
 
             feature.Styles.Add(new SymbolStyle
@@ -266,6 +283,10 @@ namespace CarShell.Pages
         {
             try
             {
+                navTimer.Stop();
+                activeRoutePoints.Clear();
+                navIndex = 0;
+
                 ClearRoute();
 
                 string url =
@@ -314,11 +335,81 @@ namespace CarShell.Pages
 
                 FitRouteToScreen(routePoints);
 
+                activeRoutePoints = routePoints;
+                navIndex = 0;
+                followCar = true;
+                navTimer.Start();
+
                 Map.Refresh();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Ошибка построения маршрута:\n" + ex.Message, "CarShell Maps");
+            }
+        }
+
+        private void NavTimer_Tick(object sender, EventArgs e)
+        {
+            if (activeRoutePoints == null || activeRoutePoints.Count == 0)
+                return;
+
+            if (navIndex >= activeRoutePoints.Count)
+            {
+                navTimer.Stop();
+                NextInstructionText.Text = "Вы прибыли";
+                NextDistanceText.Text = "0 м";
+                NextStreetText.Text = "";
+                return;
+            }
+
+            var p = activeRoutePoints[navIndex];
+
+            UpdateCarMarker(p.X, p.Y);
+
+            if (followCar)
+            {
+                Map.Map.Navigator.CenterOn(p.X, p.Y);
+                Map.Map.Navigator.ZoomTo(5);
+            }
+
+            UpdateNavigationProgress();
+
+            navIndex += 3;
+
+            Map.Refresh();
+        }
+
+        private void UpdateNavigationProgress()
+        {
+            if (activeRoutePoints == null || activeRoutePoints.Count == 0)
+                return;
+
+            double remaining = 0;
+
+            for (int i = navIndex; i < activeRoutePoints.Count - 1; i++)
+            {
+                double dx = activeRoutePoints[i + 1].X - activeRoutePoints[i].X;
+                double dy = activeRoutePoints[i + 1].Y - activeRoutePoints[i].Y;
+                remaining += Math.Sqrt(dx * dx + dy * dy);
+            }
+
+            double km = remaining / 1000.0;
+            int minutes = Math.Max(1, (int)Math.Round(km / 40.0 * 60.0));
+
+            RouteTimeText.Text = minutes + " мин";
+            RouteDistanceText.Text = km.ToString("0.0", CultureInfo.InvariantCulture) + " км";
+
+            if (remaining < 80)
+            {
+                NextDistanceText.Text = "0 м";
+                NextInstructionText.Text = "Вы прибыли";
+                NextStreetText.Text = "";
+            }
+            else
+            {
+                NextDistanceText.Text = remaining < 1000
+                    ? Math.Round(remaining) + " м"
+                    : (remaining / 1000.0).ToString("0.0", CultureInfo.InvariantCulture) + " км";
             }
         }
 
@@ -475,6 +566,10 @@ namespace CarShell.Pages
 
         private void CancelRoute_Click(object sender, RoutedEventArgs e)
         {
+            navTimer.Stop();
+            activeRoutePoints.Clear();
+            navIndex = 0;
+
             ClearRoute();
             RoutePanel.Visibility = Visibility.Collapsed;
         }
@@ -491,11 +586,20 @@ namespace CarShell.Pages
 
         private void MyLocation_Click(object sender, RoutedEventArgs e)
         {
-           // followCar = true;
+            followCar = true;
 
-            var center = SphericalMercator.FromLonLat(carLon, carLat);
-            Map.Map.Navigator.CenterOn(center.x, center.y);
-            Map.Map.Navigator.ZoomTo(200);
+            if (activeRoutePoints.Count > 0 && navIndex < activeRoutePoints.Count)
+            {
+                var p = activeRoutePoints[navIndex];
+                Map.Map.Navigator.CenterOn(p.X, p.Y);
+            }
+            else
+            {
+                var center = SphericalMercator.FromLonLat(carLon, carLat);
+                Map.Map.Navigator.CenterOn(center.x, center.y);
+            }
+
+            Map.Map.Navigator.ZoomTo(0.5);
         }
     }
 }
