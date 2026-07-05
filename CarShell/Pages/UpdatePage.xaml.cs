@@ -36,23 +36,22 @@ namespace CarShell.Pages
                 DownloadButton.IsEnabled = false;
                 InstallButton.IsEnabled = false;
 
-                var update = await UpdateService.CheckAsync();
-                latestUpdate = update;
+                latestUpdate = await UpdateService.CheckAsync();
                 downloadedZipPath = null;
 
-                LatestVersionText.Text = $"Последняя версия: {update.Version}";
-                NotesText.Text = string.IsNullOrWhiteSpace(update.Notes)
+                LatestVersionText.Text = $"Последняя версия: {latestUpdate.Version}";
+                NotesText.Text = string.IsNullOrWhiteSpace(latestUpdate.Notes)
                     ? "Описание отсутствует."
-                    : update.Notes;
+                    : latestUpdate.Notes;
 
-                if (update.HasUpdate)
+                if (latestUpdate.HasUpdate)
                 {
                     StatusText.Text = "🟡 Доступно обновление";
                     DownloadButton.IsEnabled = true;
                 }
                 else
                 {
-                    StatusText.Text = "🟢 Система обновлена";
+                    StatusText.Text = "🟢 Установлена последняя версия";
                 }
             }
             catch (Exception ex)
@@ -77,10 +76,9 @@ namespace CarShell.Pages
                 DownloadButton.IsEnabled = false;
                 InstallButton.IsEnabled = false;
 
-                string path = await UpdateService.DownloadAsync(latestUpdate.DownloadUrl);
-                downloadedZipPath = path;
+                downloadedZipPath = await UpdateService.DownloadAsync(latestUpdate.DownloadUrl);
 
-                StatusText.Text = $"🟢 Обновление скачано:\n{path}";
+                StatusText.Text = "🟢 Обновление скачано";
                 InstallButton.IsEnabled = true;
             }
             catch (Exception ex)
@@ -101,21 +99,26 @@ namespace CarShell.Pages
                     return;
                 }
 
-                string appDir = AppDomain.CurrentDomain.BaseDirectory;
+                string appDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\');
                 string updaterPath = Path.Combine(appDir, "Updater.exe");
 
                 if (!File.Exists(updaterPath))
                 {
-                    StatusText.Text = "🔴 Updater.exe не найден";
+                    StatusText.Text = "🔴 Не найден Updater.exe";
                     return;
                 }
 
-                Process.Start(new ProcessStartInfo
+                var psi = new ProcessStartInfo
                 {
                     FileName = updaterPath,
-                    Arguments = $"\"{downloadedZipPath}\" \"{appDir}\" \"CarShell.exe\"",
+                    WorkingDirectory = appDir,
                     UseShellExecute = true
-                });
+                };
+
+                psi.ArgumentList.Add(appDir);
+                psi.ArgumentList.Add(downloadedZipPath);
+
+                Process.Start(psi);
 
                 Application.Current.Shutdown();
             }
