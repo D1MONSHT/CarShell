@@ -1,9 +1,10 @@
-name: Build and Release CarShell
+name: Build and Update Latest Release
 
 on:
   push:
-    tags:
-      - "v*.*.*"
+    branches:
+      - master
+      - main
 
 permissions:
   contents: write
@@ -37,20 +38,17 @@ jobs:
           /p:DebugType=None
           /p:DebugSymbols=false
 
-      - name: Create ZIP for updater
+      - name: Create ZIP
         shell: pwsh
-        run: |
-          if (Test-Path "CarShell-win-x64.zip") {
-            Remove-Item "CarShell-win-x64.zip" -Force
-          }
-          Compress-Archive -Path publish\* -DestinationPath CarShell-win-x64.zip -Force
+        run: Compress-Archive -Path publish\* -DestinationPath CarShell-win-x64.zip -Force
 
-      - name: Create GitHub Release
+      - name: Create or update Release
         uses: softprops/action-gh-release@v2
         with:
-          name: CarShell ${{ github.ref_name }}
+          tag_name: latest
+          name: CarShell Latest
           body: |
-            Автоматическая сборка CarShell.
+            Автоматическая сборка последней версии CarShell.
 
             Файл для обновления:
             CarShell-win-x64.zip
