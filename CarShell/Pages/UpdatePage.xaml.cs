@@ -24,7 +24,6 @@ namespace CarShell.Pages
             NotesText.Text = "";
 
             DownloadButton.IsEnabled = false;
-            InstallButton.IsEnabled = false;
         }
 
         private async void CheckUpdate_Click(object sender, RoutedEventArgs e)
@@ -34,7 +33,6 @@ namespace CarShell.Pages
                 StatusText.Text = "Проверка обновлений...";
                 CheckButton.IsEnabled = false;
                 DownloadButton.IsEnabled = false;
-                InstallButton.IsEnabled = false;
 
                 latestUpdate = await UpdateService.CheckAsync();
                 downloadedZipPath = null;
@@ -74,12 +72,10 @@ namespace CarShell.Pages
 
                 StatusText.Text = "Скачивание обновления...";
                 DownloadButton.IsEnabled = false;
-                InstallButton.IsEnabled = false;
 
                 downloadedZipPath = await UpdateService.DownloadAsync(latestUpdate.DownloadUrl);
 
                 StatusText.Text = "🟢 Обновление скачано";
-                InstallButton.IsEnabled = true;
             }
             catch (Exception ex)
             {
