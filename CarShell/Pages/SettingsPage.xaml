@@ -9,17 +9,12 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button Content="← Назад"
-                Click="Back_Click"
+        <Button Content="Обновить"
+                Click="Update_Click"
                 Width="180"
                 Height="60"
                 FontSize="26"/>
 
-        <TextBlock Grid.Row="1"
-                   Text="Бортовой компьютер"
-                   FontSize="48"
-                   Foreground="White"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
+        
     </Grid>
 </UserControl>

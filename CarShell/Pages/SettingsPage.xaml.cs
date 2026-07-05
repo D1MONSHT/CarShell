@@ -5,17 +5,17 @@ namespace CarShell.Pages
 {
     public partial class SettingsPage : UserControl
     {
-        private readonly MainWindow main;
+        private readonly MainWindow mainWindow;
 
         public SettingsPage(MainWindow mainWindow)
         {
             InitializeComponent();
-            main = mainWindow;
+            this.mainWindow = mainWindow;
         }
 
-        private void Back_Click(object sender, RoutedEventArgs e)
+        private void Update_Click(object sender, RoutedEventArgs e)
         {
-            main.ShowHome();
+            mainWindow.ShowUpdate();
         }
     }
 }
