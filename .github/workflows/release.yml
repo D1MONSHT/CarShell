@@ -1,4 +1,4 @@
-name: Build and Update Latest Release
+name: Build and Release Version
 
 on:
   push:
@@ -16,11 +16,59 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+
+      - name: Get version from VersionInfo.cs
+        id: version
+        shell: pwsh
+        run: |
+          $file = Get-ChildItem -Recurse -Filter VersionInfo.cs | Select-Object -First 1
+          if (-not $file) {
+            throw "VersionInfo.cs not found"
+          }
+
+          $content = Get-Content $file.FullName -Raw
+
+          if ($content -match 'Version\s*=\s*"([^"]+)"') {
+            $version = $matches[1]
+          } else {
+            throw "Version not found in VersionInfo.cs"
+          }
+
+          $tag = "v$version"
+
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+          echo "tag=$tag" >> $env:GITHUB_OUTPUT
+
+          Write-Host "Version: $version"
+          Write-Host "Tag: $tag"
+
+      - name: Create git tag if not exists
+        shell: pwsh
+        run: |
+          $tag = "${{ steps.version.outputs.tag }}"
+
+          git fetch --tags
+
+          $exists = git tag -l $tag
+
+          if ($exists) {
+            Write-Host "Tag $tag already exists"
+          } else {
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+
+            git tag $tag
+            git push origin $tag
+
+            Write-Host "Created tag $tag"
+          }
 
       - name: Restore
         run: dotnet restore CarShell.sln
@@ -45,11 +93,13 @@ jobs:
       - name: Create or update Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: latest
-          name: CarShell Latest
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: CarShell ${{ steps.version.outputs.version }}
           body: |
-            Автоматическая сборка последней версии CarShell.
+            Автоматическая сборка версии CarShell ${{ steps.version.outputs.version }}.
 
             Файл для обновления:
             CarShell-win-x64.zip
           files: CarShell-win-x64.zip
+          make_latest: true
+          overwrite_files: true
