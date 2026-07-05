@@ -13,6 +13,7 @@ namespace CarShell
         private BoardPage boardPage;
         private ErrorPage errorPage;
         private UpdatePage updatePage;
+        private MapsPage mapsPage;
 
         public MainWindow()
         {
@@ -26,9 +27,13 @@ namespace CarShell
             boardPage = new BoardPage(this);
             errorPage = new ErrorPage(this);
             updatePage = new UpdatePage(this);
+            mapsPage = new MapsPage(this);
             ShowHome();
         }
-
+        public void ShowMaps()
+        {
+            MainContent.Content = mapsPage;
+        }
         public void ShowUpdate()
         {
             MainContent.Content = updatePage; 
@@ -65,7 +70,7 @@ namespace CarShell
         {
             MainContent.Content = errorPage;
         }
-
+        private void Maps_Click(object sender, RoutedEventArgs e) => ShowMaps();
         private void Home_Click(object sender, RoutedEventArgs e) => ShowHome();
         private void Navigation_Click(object sender, RoutedEventArgs e) => ShowNavigation();
         private void Music_Click(object sender, RoutedEventArgs e) => ShowMusic();

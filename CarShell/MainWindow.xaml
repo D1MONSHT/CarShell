@@ -2,7 +2,6 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="CarShell"
-        Cursor="None"
         WindowState="Maximized"
         WindowStyle="None"
         ResizeMode="NoResize"
@@ -102,6 +101,7 @@
                                 VerticalAlignment="Top" Grid.RowSpan="1">
 
                         <Button Content="⌂" Click="Home_Click" Style="{StaticResource SideButton}"/>
+                        <Button Content="@" Click="Maps_Click" Style="{StaticResource SideButton}"/>
                         <Button Content="➤" Click="Navigation_Click" Style="{StaticResource SideButton}"/>
                         <Button Content="♪" Click="Music_Click" Style="{StaticResource SideButton}"/>
                         <Button Content="◉" Click="Camera_Click" Style="{StaticResource SideButton}"/>
