@@ -26,19 +26,25 @@ namespace CarShell.Pages
         private readonly double carLon = 21.9990;
 
         private static readonly HttpClient http = new HttpClient();
+        private static bool userAgentAdded = false;
 
-        private MemoryLayer? carLayer;
-        private MemoryLayer? routeLayer;
-        private MemoryLayer? destinationLayer;
+        private MemoryLayer carLayer;
+        private MemoryLayer routeLayer;
+        private MemoryLayer destinationLayer;
 
         private bool ignoreSearchTextChanged = false;
         private List<SearchPlace> currentSuggestions = new List<SearchPlace>();
 
         private class SearchPlace
         {
-            public string DisplayName { get; set; } = "";
+            public string DisplayName { get; set; }
             public double Lat { get; set; }
             public double Lon { get; set; }
+
+            public SearchPlace()
+            {
+                DisplayName = "";
+            }
 
             public override string ToString()
             {
@@ -50,7 +56,15 @@ namespace CarShell.Pages
         {
             InitializeComponent();
 
-            http.DefaultRequestHeaders.UserAgent.ParseAdd("CarShell/1.0");
+            if (!userAgentAdded)
+            {
+                try
+                {
+                    http.DefaultRequestHeaders.UserAgent.ParseAdd("CarShell/1.0");
+                    userAgentAdded = true;
+                }
+                catch { }
+            }
 
             Loaded += MapsPage_Loaded;
             SearchBox.GotFocus += SearchBox_GotFocus;
@@ -102,7 +116,8 @@ namespace CarShell.Pages
 
         private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            QuickPanel.Visibility = Visibility.Visible;
+            if (QuickPanel != null)
+                QuickPanel.Visibility = Visibility.Visible;
 
             if (SearchBox.Text == "Поиск места")
                 SearchBox.Text = "";
@@ -111,6 +126,9 @@ namespace CarShell.Pages
         private async void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (ignoreSearchTextChanged)
+                return;
+
+            if (!IsLoaded || SuggestionsPanel == null || SuggestionsList == null)
                 return;
 
             string query = SearchBox.Text.Trim();
@@ -144,9 +162,9 @@ namespace CarShell.Pages
                 {
                     currentSuggestions.Add(new SearchPlace
                     {
-                        DisplayName = item["display_name"]?.ToString() ?? "",
-                        Lat = double.Parse(item["lat"]!.ToString(), CultureInfo.InvariantCulture),
-                        Lon = double.Parse(item["lon"]!.ToString(), CultureInfo.InvariantCulture)
+                        DisplayName = item["display_name"] != null ? item["display_name"].ToString() : "",
+                        Lat = double.Parse(item["lat"].ToString(), CultureInfo.InvariantCulture),
+                        Lon = double.Parse(item["lon"].ToString(), CultureInfo.InvariantCulture)
                     });
                 }
 
@@ -165,7 +183,9 @@ namespace CarShell.Pages
 
         private async void SuggestionsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (SuggestionsList.SelectedItem is not SearchPlace place)
+            SearchPlace place = SuggestionsList.SelectedItem as SearchPlace;
+
+            if (place == null)
                 return;
 
             ignoreSearchTextChanged = true;
@@ -187,7 +207,7 @@ namespace CarShell.Pages
 
             if (currentSuggestions.Count > 0)
             {
-                var place = currentSuggestions[0];
+                SearchPlace place = currentSuggestions[0];
 
                 SuggestionsPanel.Visibility = Visibility.Collapsed;
                 QuickPanel.Visibility = Visibility.Collapsed;
@@ -211,7 +231,7 @@ namespace CarShell.Pages
 
             if (currentSuggestions.Count > 0)
             {
-                var place = currentSuggestions[0];
+                SearchPlace place = currentSuggestions[0];
                 await BuildRouteOnlineAsync(carLat, carLon, place.Lat, place.Lon);
             }
         }
@@ -243,29 +263,29 @@ namespace CarShell.Pages
                 ClearRoute();
 
                 string url =
-                    $"https://router.project-osrm.org/route/v1/driving/" +
-                    $"{startLon.ToString(CultureInfo.InvariantCulture)}," +
-                    $"{startLat.ToString(CultureInfo.InvariantCulture)};" +
-                    $"{destLon.ToString(CultureInfo.InvariantCulture)}," +
-                    $"{destLat.ToString(CultureInfo.InvariantCulture)}" +
-                    $"?overview=full&geometries=geojson&steps=true";
+                    "https://router.project-osrm.org/route/v1/driving/" +
+                    startLon.ToString(CultureInfo.InvariantCulture) + "," +
+                    startLat.ToString(CultureInfo.InvariantCulture) + ";" +
+                    destLon.ToString(CultureInfo.InvariantCulture) + "," +
+                    destLat.ToString(CultureInfo.InvariantCulture) +
+                    "?overview=full&geometries=geojson&steps=true";
 
                 string json = await http.GetStringAsync(url);
                 JObject root = JObject.Parse(json);
 
-                if (root["code"]?.ToString() != "Ok")
+                if (root["code"] == null || root["code"].ToString() != "Ok")
                 {
                     MessageBox.Show("Маршрут не найден", "CarShell Maps");
                     return;
                 }
 
-                JArray coords = (JArray)root["routes"]![0]!["geometry"]!["coordinates"]!;
+                JArray coords = (JArray)root["routes"][0]["geometry"]["coordinates"];
                 List<NtsCoordinate> routePoints = new List<NtsCoordinate>();
 
                 foreach (JArray c in coords)
                 {
-                    double lon = c[0]!.Value<double>();
-                    double lat = c[1]!.Value<double>();
+                    double lon = c[0].Value<double>();
+                    double lat = c[1].Value<double>();
 
                     var p = SphericalMercator.FromLonLat(lon, lat);
                     routePoints.Add(new NtsCoordinate(p.x, p.y));
@@ -279,8 +299,8 @@ namespace CarShell.Pages
 
                 DrawRoute(routePoints, destLat, destLon);
 
-                double distanceMeters = root["routes"]![0]!["distance"]!.Value<double>();
-                double durationSeconds = root["routes"]![0]!["duration"]!.Value<double>();
+                double distanceMeters = root["routes"][0]["distance"].Value<double>();
+                double durationSeconds = root["routes"][0]["duration"].Value<double>();
 
                 UpdateRoutePanel(root, distanceMeters, durationSeconds);
 
@@ -301,28 +321,33 @@ namespace CarShell.Pages
             int minutes = Math.Max(1, (int)Math.Round(durationSeconds / 60.0));
             double km = distanceMeters / 1000.0;
 
-            RouteTimeText.Text = $"{minutes} мин";
-            RouteDistanceText.Text = $"{km:0.0} км";
+            RouteTimeText.Text = minutes + " мин";
+            RouteDistanceText.Text = km.ToString("0.0", CultureInfo.InvariantCulture) + " км";
 
             try
             {
-                var firstStep = root["routes"]![0]!["legs"]![0]!["steps"]![0];
+                var firstStep = root["routes"][0]["legs"][0]["steps"][0];
 
-                double stepDistance = firstStep!["distance"]!.Value<double>();
-                string street = firstStep["name"]?.ToString() ?? "";
+                double stepDistance = firstStep["distance"].Value<double>();
+                string street = firstStep["name"] != null ? firstStep["name"].ToString() : "";
 
-                string maneuverType = firstStep["maneuver"]?["type"]?.ToString() ?? "";
-                string modifier = firstStep["maneuver"]?["modifier"]?.ToString() ?? "";
+                string maneuverType = firstStep["maneuver"]["type"] != null
+                    ? firstStep["maneuver"]["type"].ToString()
+                    : "";
+
+                string modifier = firstStep["maneuver"]["modifier"] != null
+                    ? firstStep["maneuver"]["modifier"].ToString()
+                    : "";
 
                 NextDistanceText.Text = stepDistance < 1000
-                    ? $"{Math.Round(stepDistance)} м"
-                    : $"{stepDistance / 1000.0:0.0} км";
+                    ? Math.Round(stepDistance) + " м"
+                    : (stepDistance / 1000.0).ToString("0.0", CultureInfo.InvariantCulture) + " км";
 
                 NextInstructionText.Text = GetInstruction(maneuverType, modifier);
 
                 NextStreetText.Text = string.IsNullOrWhiteSpace(street)
                     ? ""
-                    : $"на {street}";
+                    : "на " + street;
             }
             catch
             {
@@ -438,7 +463,8 @@ namespace CarShell.Pages
                 destinationLayer = null;
             }
 
-            Map.Refresh();
+            if (Map != null)
+                Map.Refresh();
         }
 
         private void CancelRoute_Click(object sender, RoutedEventArgs e)
