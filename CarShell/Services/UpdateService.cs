@@ -39,7 +39,7 @@ namespace CarShell.Services
             if (root.TryGetProperty("assets", out var assets))
             {
                 var asset = assets.EnumerateArray()
-                    .FirstOrDefault(x => x.GetProperty("name").GetString() == "CarShell.zip");
+                    .FirstOrDefault(x => x.GetProperty("name").GetString() == "CarShell-win-x64.zip");
 
                 if (asset.ValueKind != JsonValueKind.Undefined)
                     downloadUrl = asset.GetProperty("browser_download_url").GetString() ?? "";
