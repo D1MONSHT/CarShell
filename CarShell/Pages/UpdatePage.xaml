@@ -53,25 +53,29 @@
                            MinHeight="120"/>
 
                 <StackPanel Orientation="Horizontal" Margin="0,30,0,0">
-                    <Button Content="Проверить"
-                            Width="190"
-                            Height="60"
-                            FontSize="24"
-                            Click="CheckUpdate_Click"/>
+                    <Button x:Name="CheckButton"
+        Content="Проверить"
+        Width="190"
+        Height="60"
+        FontSize="24"
+        Click="CheckUpdate_Click"/>
 
-                    <Button Content="Скачать"
-                            Width="190"
-                            Height="60"
-                            FontSize="24"
-                            Margin="20,0,0,0"
-                            IsEnabled="False"/>
+                    <Button x:Name="DownloadButton"
+        Content="Скачать"
+        Width="190"
+        Height="60"
+        FontSize="24"
+        Margin="20,0,0,0"
+        Click="DownloadUpdate_Click"
+        IsEnabled="False"/>
 
-                    <Button Content="Установить"
-                            Width="190"
-                            Height="60"
-                            FontSize="24"
-                            Margin="20,0,0,0"
-                            IsEnabled="False"/>
+                    <Button x:Name="InstallButton"
+        Content="Установить"
+        Width="190"
+        Height="60"
+        FontSize="24"
+        Margin="20,0,0,0"
+        IsEnabled="False"/>
                 </StackPanel>
             </StackPanel>
         </Border>

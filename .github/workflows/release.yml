@@ -1,0 +1,51 @@
+name: Build and Release CarShell
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore CarShell.sln
+
+      - name: Publish win-x64
+        run: >
+          dotnet publish CarShell/CarShell.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -o publish
+          /p:PublishSingleFile=true
+          /p:IncludeNativeLibrariesForSelfExtract=true
+          /p:EnableCompressionInSingleFile=true
+
+      - name: Create ZIP
+        shell: pwsh
+        run: Compress-Archive -Path publish\* -DestinationPath CarShell-win-x64.zip -Force
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: CarShell-win-x64.zip
+          name: CarShell ${{ github.ref_name }}
+          body: |
+            Автоматическая сборка CarShell.
+
+            Файл для обновления:
+            CarShell-win-x64.zip
