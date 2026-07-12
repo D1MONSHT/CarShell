@@ -4,6 +4,30 @@
              Background="#05080D">
 
     <UserControl.Resources>
+        <Style TargetType="ScrollViewer">
+
+            <Setter Property="VerticalScrollBarVisibility"
+            Value="Auto"/>
+
+            <Setter Property="HorizontalScrollBarVisibility"
+            Value="Disabled"/>
+
+            <Setter Property="PanningMode"
+            Value="VerticalOnly"/>
+
+            <Setter Property="PanningDeceleration"
+            Value="0.002"/>
+
+            <Setter Property="PanningRatio"
+            Value="1.2"/>
+
+            <Setter Property="IsManipulationEnabled"
+            Value="True"/>
+
+            <Setter Property="CanContentScroll"
+            Value="False"/>
+
+        </Style>
 
         <!-- Левая кнопка раздела -->
         <Style x:Key="NavigationButtonStyle"
