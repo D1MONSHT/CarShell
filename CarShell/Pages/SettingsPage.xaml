@@ -41,6 +41,7 @@
 
             <Setter Property="Template">
                 <Setter.Value>
+
                     <ControlTemplate TargetType="Button">
 
                         <Border x:Name="ButtonBorder"
@@ -48,8 +49,9 @@
                                 CornerRadius="16"
                                 Padding="{TemplateBinding Padding}">
 
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <ContentPresenter
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
 
                         </Border>
 
@@ -79,6 +81,7 @@
                         </ControlTemplate.Triggers>
 
                     </ControlTemplate>
+
                 </Setter.Value>
             </Setter>
 
@@ -141,15 +144,17 @@
 
             <Setter Property="Template">
                 <Setter.Value>
+
                     <ControlTemplate TargetType="Button">
 
                         <Border x:Name="ButtonBorder"
                                 Background="{TemplateBinding Background}"
                                 CornerRadius="14">
 
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"
-                                              Margin="{TemplateBinding Padding}"/>
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="{TemplateBinding Padding}"/>
 
                         </Border>
 
@@ -185,6 +190,7 @@
                         </ControlTemplate.Triggers>
 
                     </ControlTemplate>
+
                 </Setter.Value>
             </Setter>
 
@@ -205,6 +211,7 @@
 
             <Setter Property="Template">
                 <Setter.Value>
+
                     <ControlTemplate TargetType="CheckBox">
 
                         <Grid Width="70"
@@ -254,6 +261,7 @@
                         </ControlTemplate.Triggers>
 
                     </ControlTemplate>
+
                 </Setter.Value>
             </Setter>
 
@@ -611,7 +619,8 @@
                 <!-- СИСТЕМА -->
                 <ScrollViewer x:Name="SystemPanel"
                               Visibility="Collapsed"
-                              VerticalScrollBarVisibility="Auto">
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
 
                     <StackPanel>
 
@@ -726,114 +735,21 @@
                 </ScrollViewer>
 
                 <!-- ОБНОВЛЕНИЯ -->
-                <ScrollViewer x:Name="UpdatePanel"
-                              Visibility="Collapsed"
-                              VerticalScrollBarVisibility="Auto">
+                <Grid x:Name="UpdatePanel"
+                      Visibility="Collapsed">
 
-                    <StackPanel>
+                    <Frame x:Name="UpdateSettingsFrame"
+                           NavigationUIVisibility="Hidden"
+                           Background="Transparent"
+                           BorderThickness="0"/>
 
-                        <TextBlock Text="Обновления"
-                                   FontSize="32"
-                                   FontWeight="Bold"
-                                   Foreground="White"/>
-
-                        <TextBlock Text="Установка новой или предыдущей версии CarShell"
-                                   FontSize="17"
-                                   Foreground="#778A9E"
-                                   Margin="0,5,0,24"/>
-
-                        <Border Style="{StaticResource SettingsCardStyle}">
-
-                            <StackPanel>
-
-                                <TextBlock Text="Текущая версия"
-                                           FontSize="17"
-                                           Foreground="#8295A8"/>
-
-                                <TextBlock x:Name="CurrentVersionText"
-                                           Text="1.0.0"
-                                           Margin="0,5,0,0"
-                                           FontSize="29"
-                                           FontWeight="Bold"
-                                           Foreground="White"/>
-
-                            </StackPanel>
-
-                        </Border>
-
-                        <Border Style="{StaticResource SettingsCardStyle}">
-
-                            <Grid>
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <StackPanel>
-
-                                    <TextBlock Text="Проверка обновлений"
-                                               FontSize="21"
-                                               FontWeight="SemiBold"
-                                               Foreground="White"/>
-
-                                    <TextBlock x:Name="UpdateStatusText"
-                                               Text="Проверка ещё не выполнялась"
-                                               Foreground="#8295A8"
-                                               FontSize="15"
-                                               Margin="0,6,0,0"/>
-
-                                </StackPanel>
-
-                                <Button Grid.Column="1"
-                                        Content="Проверить"
-                                        Style="{StaticResource ActionButtonStyle}"
-                                        Click="CheckUpdatesButton_Click"/>
-
-                            </Grid>
-
-                        </Border>
-
-                        <Border Style="{StaticResource SettingsCardStyle}">
-
-                            <Grid>
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <StackPanel>
-
-                                    <TextBlock Text="История версий"
-                                               FontSize="21"
-                                               FontWeight="SemiBold"
-                                               Foreground="White"/>
-
-                                    <TextBlock Text="Выбор версии для обновления или отката"
-                                               Foreground="#8295A8"
-                                               FontSize="15"
-                                               Margin="0,6,0,0"/>
-
-                                </StackPanel>
-
-                                <Button Grid.Column="1"
-                                        Content="Выбрать версию"
-                                        Style="{StaticResource ActionButtonStyle}"
-                                        Click="VersionHistoryButton_Click"/>
-
-                            </Grid>
-
-                        </Border>
-
-                    </StackPanel>
-
-                </ScrollViewer>
+                </Grid>
 
                 <!-- АВТОМОБИЛЬ -->
                 <ScrollViewer x:Name="CarPanel"
                               Visibility="Collapsed"
-                              VerticalScrollBarVisibility="Auto">
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
 
                     <StackPanel>
 
@@ -908,7 +824,8 @@
                 <!-- О ПРОГРАММЕ -->
                 <ScrollViewer x:Name="AboutPanel"
                               Visibility="Collapsed"
-                              VerticalScrollBarVisibility="Auto">
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
 
                     <StackPanel>
 

@@ -2,12 +2,15 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using CarShell.Pages.Settings;
 
 namespace CarShell.Pages
 {
     public partial class SettingsPage : UserControl
     {
         private readonly MainWindow mainWindow;
+        private readonly UpdateSettingsControl updateSettingsControl;
 
         public SettingsPage(MainWindow mainWindow)
         {
@@ -15,14 +18,23 @@ namespace CarShell.Pages
 
             this.mainWindow = mainWindow;
 
+            // Создаём экран обновлений один раз,
+            // чтобы его состояние не терялось при переключении разделов.
+            updateSettingsControl = new UpdateSettingsControl();
+
             Loaded += SettingsPage_Loaded;
         }
 
-        private void SettingsPage_Loaded(object sender, RoutedEventArgs e)
+        private void SettingsPage_Loaded(
+            object sender,
+            RoutedEventArgs e)
         {
             LoadVersionInformation();
             UpdateDateTimeText();
-            ShowPanel(NetworkPanel, NetworkNavigationButton);
+
+            ShowPanel(
+                NetworkPanel,
+                NetworkNavigationButton);
         }
 
         private void LoadVersionInformation()
@@ -31,15 +43,19 @@ namespace CarShell.Pages
             {
                 string version = VersionInfo.Version;
 
-                CurrentVersionText.Text = version;
-                SidebarVersionText.Text = $"Версия {version}";
-                AboutVersionText.Text = $"Версия {version}";
+                SidebarVersionText.Text =
+                    $"Версия {version}";
+
+                AboutVersionText.Text =
+                    $"Версия {version}";
             }
             catch
             {
-                CurrentVersionText.Text = "Неизвестно";
-                SidebarVersionText.Text = "Версия неизвестна";
-                AboutVersionText.Text = "Версия неизвестна";
+                SidebarVersionText.Text =
+                    "Версия неизвестна";
+
+                AboutVersionText.Text =
+                    "Версия неизвестна";
             }
         }
 
@@ -51,11 +67,20 @@ namespace CarShell.Pages
 
         private void HideAllPanels()
         {
-            NetworkPanel.Visibility = Visibility.Collapsed;
-            SystemPanel.Visibility = Visibility.Collapsed;
-            UpdatePanel.Visibility = Visibility.Collapsed;
-            CarPanel.Visibility = Visibility.Collapsed;
-            AboutPanel.Visibility = Visibility.Collapsed;
+            NetworkPanel.Visibility =
+                Visibility.Collapsed;
+
+            SystemPanel.Visibility =
+                Visibility.Collapsed;
+
+            UpdatePanel.Visibility =
+                Visibility.Collapsed;
+
+            CarPanel.Visibility =
+                Visibility.Collapsed;
+
+            AboutPanel.Visibility =
+                Visibility.Collapsed;
 
             ResetNavigationButtons();
         }
@@ -63,19 +88,19 @@ namespace CarShell.Pages
         private void ResetNavigationButtons()
         {
             NetworkNavigationButton.Background =
-                System.Windows.Media.Brushes.Transparent;
+                Brushes.Transparent;
 
             SystemNavigationButton.Background =
-                System.Windows.Media.Brushes.Transparent;
+                Brushes.Transparent;
 
             UpdateNavigationButton.Background =
-                System.Windows.Media.Brushes.Transparent;
+                Brushes.Transparent;
 
             CarNavigationButton.Background =
-                System.Windows.Media.Brushes.Transparent;
+                Brushes.Transparent;
 
             AboutNavigationButton.Background =
-                System.Windows.Media.Brushes.Transparent;
+                Brushes.Transparent;
         }
 
         private void ShowPanel(
@@ -84,11 +109,12 @@ namespace CarShell.Pages
         {
             HideAllPanels();
 
-            panel.Visibility = Visibility.Visible;
+            panel.Visibility =
+                Visibility.Visible;
 
             selectedButton.Background =
-                new System.Windows.Media.SolidColorBrush(
-                    System.Windows.Media.Color.FromRgb(
+                new SolidColorBrush(
+                    Color.FromRgb(
                         24,
                         63,
                         91));
@@ -128,6 +154,13 @@ namespace CarShell.Pages
             ShowPanel(
                 UpdatePanel,
                 UpdateNavigationButton);
+
+            // Загружаем страницу обновлений только при первом открытии.
+            if (UpdateSettingsFrame.Content == null)
+            {
+                UpdateSettingsFrame.Navigate(
+                    updateSettingsControl);
+            }
         }
 
         private void CarNavigationButton_Click(
@@ -152,8 +185,8 @@ namespace CarShell.Pages
             object sender,
             RoutedEventArgs e)
         {
-            // Реальное включение и отключение Wi-Fi
-            // подключим через RadioService следующим этапом.
+            // Пока меняем только текст.
+            // Реальное управление адаптером добавим через RadioService.
 
             WifiStatusText.Text =
                 WifiToggle.IsChecked == true
@@ -165,8 +198,8 @@ namespace CarShell.Pages
             object sender,
             RoutedEventArgs e)
         {
-            // Реальное включение и отключение Bluetooth
-            // подключим через RadioService следующим этапом.
+            // Пока меняем только текст.
+            // Реальное управление Bluetooth добавим через RadioService.
 
             BluetoothStatusText.Text =
                 BluetoothToggle.IsChecked == true
@@ -179,7 +212,7 @@ namespace CarShell.Pages
             RoutedEventArgs e)
         {
             MessageBox.Show(
-                "Следующим шагом здесь будет список доступных Wi-Fi сетей.",
+                "Здесь будет список доступных Wi-Fi сетей.",
                 "CarShell",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
@@ -190,34 +223,8 @@ namespace CarShell.Pages
             RoutedEventArgs e)
         {
             MessageBox.Show(
-                "Следующим шагом здесь будет список Bluetooth-устройств.",
+                "Здесь будет список Bluetooth-устройств.",
                 "CarShell",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-
-        private void CheckUpdatesButton_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            UpdateStatusText.Text =
-                "Переход к проверке обновлений...";
-
-            /*
-             * Если старая UpdatePage пока сохранена,
-             * здесь можно вызвать:
-             *
-             * mainWindow.ShowUpdate();
-             */
-        }
-
-        private void VersionHistoryButton_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            MessageBox.Show(
-                "Здесь будет список GitHub Releases с возможностью выбрать версию.",
-                "История версий",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
@@ -226,24 +233,28 @@ namespace CarShell.Pages
             object sender,
             RoutedEventArgs e)
         {
-            OpenWindowsSettings("ms-settings:display");
+            OpenWindowsSettings(
+                "ms-settings:display");
         }
 
         private void VolumeButton_Click(
             object sender,
             RoutedEventArgs e)
         {
-            OpenWindowsSettings("ms-settings:sound");
+            OpenWindowsSettings(
+                "ms-settings:sound");
         }
 
         private void DateTimeButton_Click(
             object sender,
             RoutedEventArgs e)
         {
-            OpenWindowsSettings("ms-settings:dateandtime");
+            OpenWindowsSettings(
+                "ms-settings:dateandtime");
         }
 
-        private static void OpenWindowsSettings(string address)
+        private static void OpenWindowsSettings(
+            string address)
         {
             try
             {

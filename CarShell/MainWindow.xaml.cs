@@ -12,7 +12,6 @@ namespace CarShell
         private SettingsPage settingsPage;
         private BoardPage boardPage;
         private ErrorPage errorPage;
-        private UpdatePage updatePage;
         private MapsPage mapsPage;
 
         public MainWindow()
@@ -26,17 +25,12 @@ namespace CarShell
             settingsPage = new SettingsPage(this);
             boardPage = new BoardPage(this);
             errorPage = new ErrorPage(this);
-            updatePage = new UpdatePage(this);
             mapsPage = new MapsPage(this);
             ShowHome();
         }
         public void ShowMaps()
         {
             MainContent.Content = mapsPage;
-        }
-        public void ShowUpdate()
-        {
-            MainContent.Content = updatePage; 
         }
         public void ShowHome()
         {
