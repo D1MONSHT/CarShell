@@ -51,9 +51,6 @@ namespace CarShell.Services
             return client;
         }
 
-        /// <summary>
-        /// Проверяет последний опубликованный GitHub Release.
-        /// </summary>
         public static async Task<UpdateInfo> CheckAsync(
             CancellationToken cancellationToken = default)
         {
@@ -76,7 +73,8 @@ namespace CarShell.Services
                 JsonDocument.Parse(json);
 
             UpdateInfo? update =
-                ParseRelease(document.RootElement);
+                ParseRelease(
+                    document.RootElement);
 
             if (update == null)
             {
@@ -92,9 +90,6 @@ namespace CarShell.Services
             return update;
         }
 
-        /// <summary>
-        /// Получает все опубликованные версии, содержащие ZIP обновления.
-        /// </summary>
         public static async Task<List<UpdateInfo>> GetVersionsAsync(
             CancellationToken cancellationToken = default)
         {
@@ -130,7 +125,8 @@ namespace CarShell.Services
                      document.RootElement.EnumerateArray())
             {
                 UpdateInfo? update =
-                    ParseRelease(release);
+                    ParseRelease(
+                        release);
 
                 if (update == null)
                 {
@@ -142,7 +138,8 @@ namespace CarShell.Services
                         update.Version,
                         VersionInfo.Version);
 
-                versions.Add(update);
+                versions.Add(
+                    update);
             }
 
             versions.Sort(
@@ -154,14 +151,12 @@ namespace CarShell.Services
             return versions;
         }
 
-        /// <summary>
-        /// Скачивает ZIP обновления во временную папку.
-        /// </summary>
         public static async Task<string> DownloadAsync(
             string downloadUrl,
             CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(downloadUrl))
+            if (string.IsNullOrWhiteSpace(
+                    downloadUrl))
             {
                 throw new ArgumentException(
                     "Ссылка на файл обновления отсутствует.",
@@ -187,22 +182,22 @@ namespace CarShell.Services
             Directory.CreateDirectory(
                 updateDirectory);
 
-            string fileName =
-                GetFileNameFromUrl(uri);
+            CleanupOldUpdateFiles(
+                updateDirectory);
+
+            string uniqueFileName =
+                $"CarShell-" +
+                $"{DateTime.Now:yyyyMMdd-HHmmss}-" +
+                $"{Guid.NewGuid():N}.zip";
 
             string destinationPath =
                 Path.Combine(
                     updateDirectory,
-                    fileName);
+                    uniqueFileName);
 
             string temporaryPath =
-                destinationPath + ".download";
-
-            DeleteFileIfExists(
-                temporaryPath);
-
-            DeleteFileIfExists(
-                destinationPath);
+                destinationPath +
+                ".download";
 
             try
             {
@@ -221,24 +216,27 @@ namespace CarShell.Services
                     await response.Content.ReadAsStreamAsync(
                         cancellationToken);
 
-                await using var destinationStream =
-                    new FileStream(
-                        temporaryPath,
-                        FileMode.Create,
-                        FileAccess.Write,
-                        FileShare.None,
-                        bufferSize: 81920,
-                        useAsync: true);
+                await using (
+                    var destinationStream =
+                        new FileStream(
+                            temporaryPath,
+                            FileMode.CreateNew,
+                            FileAccess.Write,
+                            FileShare.None,
+                            bufferSize: 81920,
+                            useAsync: true))
+                {
+                    await sourceStream.CopyToAsync(
+                        destinationStream,
+                        81920,
+                        cancellationToken);
 
-                await sourceStream.CopyToAsync(
-                    destinationStream,
-                    81920,
-                    cancellationToken);
+                    await destinationStream.FlushAsync(
+                        cancellationToken);
+                }
 
-                await destinationStream.FlushAsync(
-                    cancellationToken);
-
-                if (!File.Exists(temporaryPath))
+                if (!File.Exists(
+                        temporaryPath))
                 {
                     throw new FileNotFoundException(
                         "Временный файл обновления не был создан.",
@@ -255,10 +253,10 @@ namespace CarShell.Services
                         "Скачанный файл обновления пуст.");
                 }
 
-                File.Move(
+                await MoveDownloadedFileAsync(
                     temporaryPath,
                     destinationPath,
-                    overwrite: true);
+                    cancellationToken);
 
                 return destinationPath;
             }
@@ -268,6 +266,110 @@ namespace CarShell.Services
                     temporaryPath);
 
                 throw;
+            }
+        }
+
+        private static async Task MoveDownloadedFileAsync(
+            string temporaryPath,
+            string destinationPath,
+            CancellationToken cancellationToken)
+        {
+            const int maximumAttempts = 10;
+
+            Exception? lastException =
+                null;
+
+            for (int attempt = 1;
+                 attempt <= maximumAttempts;
+                 attempt++)
+            {
+                try
+                {
+                    File.Move(
+                        temporaryPath,
+                        destinationPath);
+
+                    return;
+                }
+                catch (IOException ex)
+                {
+                    lastException = ex;
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    lastException = ex;
+                }
+
+                if (attempt < maximumAttempts)
+                {
+                    await Task.Delay(
+                        500,
+                        cancellationToken);
+                }
+            }
+
+            throw new IOException(
+                $"Не удалось завершить сохранение файла обновления:\n" +
+                $"{destinationPath}",
+                lastException);
+        }
+
+        private static void CleanupOldUpdateFiles(
+            string updateDirectory)
+        {
+            try
+            {
+                DateTime deleteBefore =
+                    DateTime.Now.AddDays(-3);
+
+                foreach (string file in
+                         Directory.GetFiles(
+                             updateDirectory,
+                             "*.download"))
+                {
+                    TryDeleteOldFile(
+                        file,
+                        deleteBefore);
+                }
+
+                foreach (string file in
+                         Directory.GetFiles(
+                             updateDirectory,
+                             "*.zip"))
+                {
+                    TryDeleteOldFile(
+                        file,
+                        deleteBefore);
+                }
+            }
+            catch
+            {
+                // Ошибка очистки старых файлов
+                // не должна блокировать скачивание.
+            }
+        }
+
+        private static void TryDeleteOldFile(
+            string filePath,
+            DateTime deleteBefore)
+        {
+            try
+            {
+                DateTime lastWriteTime =
+                    File.GetLastWriteTime(
+                        filePath);
+
+                if (lastWriteTime <
+                    deleteBefore)
+                {
+                    File.Delete(
+                        filePath);
+                }
+            }
+            catch
+            {
+                // Файл может использоваться Updater.
+                // В этом случае оставляем его до следующей очистки.
             }
         }
 
@@ -293,7 +395,6 @@ namespace CarShell.Services
                 prereleaseElement.ValueKind ==
                 JsonValueKind.True;
 
-            // Предварительные релизы пока не показываем.
             if (isPrerelease)
             {
                 return null;
@@ -304,7 +405,8 @@ namespace CarShell.Services
                     release,
                     "tag_name");
 
-            if (string.IsNullOrWhiteSpace(version))
+            if (string.IsNullOrWhiteSpace(
+                    version))
             {
                 return null;
             }
@@ -318,7 +420,8 @@ namespace CarShell.Services
                 FindAssetDownloadUrl(
                     release);
 
-            if (string.IsNullOrWhiteSpace(downloadUrl))
+            if (string.IsNullOrWhiteSpace(
+                    downloadUrl))
             {
                 return null;
             }
@@ -407,7 +510,8 @@ namespace CarShell.Services
                 await response.Content.ReadAsStringAsync(
                     cancellationToken);
 
-            if (string.IsNullOrWhiteSpace(responseText))
+            if (string.IsNullOrWhiteSpace(
+                    responseText))
             {
                 responseText =
                     response.ReasonPhrase
@@ -419,28 +523,6 @@ namespace CarShell.Services
                 $"HTTP {(int)response.StatusCode} " +
                 $"{response.StatusCode}.\n\n" +
                 responseText);
-        }
-
-        private static string GetFileNameFromUrl(
-            Uri uri)
-        {
-            string fileName =
-                Path.GetFileName(
-                    uri.LocalPath);
-
-            if (string.IsNullOrWhiteSpace(fileName))
-            {
-                fileName = AssetName;
-            }
-
-            if (!fileName.EndsWith(
-                    ".zip",
-                    StringComparison.OrdinalIgnoreCase))
-            {
-                fileName = AssetName;
-            }
-
-            return fileName;
         }
 
         private static bool IsNewerVersion(
@@ -498,8 +580,9 @@ namespace CarShell.Services
             if (firstParsedSuccessfully &&
                 secondParsedSuccessfully)
             {
-                return firstParsed!.CompareTo(
-                    secondParsed);
+                return firstParsed!
+                    .CompareTo(
+                        secondParsed);
             }
 
             return string.Compare(
@@ -511,7 +594,8 @@ namespace CarShell.Services
         private static string NormalizeVersion(
             string version)
         {
-            if (string.IsNullOrWhiteSpace(version))
+            if (string.IsNullOrWhiteSpace(
+                    version))
             {
                 return "0.0.0";
             }
@@ -558,8 +642,6 @@ namespace CarShell.Services
             }
             catch
             {
-                // Ошибка очистки старого временного файла
-                // не должна блокировать основную загрузку.
             }
         }
     }

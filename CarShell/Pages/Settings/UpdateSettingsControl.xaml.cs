@@ -321,13 +321,9 @@ namespace CarShell.Pages.Settings
             }
             catch (Exception ex)
             {
-                downloadedZipPath = null;
+                StatusText.Text = "Ошибка";
 
-                StatusText.Text =
-                    "🔴 Ошибка скачивания версии";
-
-                NotesText.Text =
-                    ex.Message;
+                NotesText.Text = ex.ToString();
             }
             finally
             {
