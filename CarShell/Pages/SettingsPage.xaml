@@ -1319,7 +1319,7 @@
                 <!-- ОБНОВЛЕНИЯ -->
                 <!-- ================================================= -->
 
-                <Grid x:Name="UpdatePanel"
+                <ScrollViewer x:Name="UpdatePanel"
                       Visibility="Collapsed">
 
                     <Frame x:Name="UpdateSettingsFrame"
@@ -1327,7 +1327,7 @@
                            Background="Transparent"
                            BorderThickness="0"/>
 
-                </Grid>
+                </ScrollViewer>
 
                 <!-- ================================================= -->
                 <!-- АВТОМОБИЛЬ -->
