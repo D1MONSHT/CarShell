@@ -140,7 +140,6 @@ jobs:
         run: |
           dotnet publish "CarShell/CarShell.csproj" `
             -c Release `
-            -f net8.0-windows `
             -r win-x64 `
             --self-contained true `
             -o "publish" `
@@ -155,7 +154,6 @@ jobs:
         run: |
           dotnet publish "Updater/Updater.csproj" `
             -c Release `
-            -f net8.0-windows `
             -r win-x64 `
             --self-contained true `
             -o "updater-publish" `
