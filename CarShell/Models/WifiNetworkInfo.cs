@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarShell
+namespace CarShell.Models
 {
-    public static class VersionInfo
+    internal class WifiNetworkInfo
     {
-        public const string Version = "0.0.12";
     }
 }

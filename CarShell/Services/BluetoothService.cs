@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarShell
+namespace CarShell.Services
 {
-    public static class VersionInfo
+    internal class BluetoothService
     {
-        public const string Version = "0.0.12";
     }
 }
