@@ -422,7 +422,20 @@
                             </StackPanel>
 
                         </Button>
+                        <Button x:Name="Explorer"
+        Style="{StaticResource NavigationButtonStyle}"
+        Click="OpenExplorer_Click">
 
+                            <StackPanel Orientation="Horizontal">
+
+
+                                <TextBlock Text="Открыть проводник"
+                   VerticalAlignment="Center"/>
+
+                            </StackPanel>
+
+                        </Button>
+                       
                     </StackPanel>
 
                     <Border Grid.Row="1"

@@ -206,6 +206,25 @@ namespace CarShell.Pages
                     ? "Bluetooth включён"
                     : "Bluetooth выключен";
         }
+        private void OpenExplorer_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Не удалось открыть проводник:\n{ex.Message}",
+                    "CarShell",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
 
         private void OpenWifiButton_Click(
             object sender,
