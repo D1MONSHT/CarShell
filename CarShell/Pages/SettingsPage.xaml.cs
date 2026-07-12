@@ -1,11 +1,7 @@
-﻿using CarShell.Models;
-using CarShell.Pages.Settings;
-using CarShell.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,11 +9,12 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Windows.Devices.Bluetooth;
+using Microsoft.Win32;
+using CarShell.Pages.Settings;
+using CarShell.Services;
 
 namespace CarShell.Pages
 {
-    [SupportedOSPlatform("windows10.0.17763.0")]
     public partial class SettingsPage : UserControl
     {
         private readonly MainWindow mainWindow;
@@ -25,18 +22,18 @@ namespace CarShell.Pages
         private readonly DispatcherTimer clockTimer;
 
         private bool systemControlsLoading;
-
         private bool wifiStateLoading;
         private bool wifiNetworksLoading;
-
         private bool bluetoothStateLoading;
         private bool bluetoothDevicesLoading;
+        private bool powerEventsSubscribed;
 
         private CancellationTokenSource? brightnessCancellationTokenSource;
+        private CancellationTokenSource? systemSettingsSaveCancellationTokenSource;
 
         private WifiNetworkInfo? selectedWifiNetwork;
-
         private DateTime selectedDateTime = DateTime.Now;
+        private CarShellUserSettings savedUserSettings = new();
 
         private readonly string[] monthNames =
         {
@@ -59,9 +56,7 @@ namespace CarShell.Pages
             InitializeComponent();
 
             this.mainWindow = mainWindow;
-
-            updateSettingsControl =
-                new UpdateSettingsControl();
+            updateSettingsControl = new UpdateSettingsControl();
 
             clockTimer = new DispatcherTimer
             {
@@ -72,6 +67,8 @@ namespace CarShell.Pages
 
             Loaded += SettingsPage_Loaded;
             Unloaded += SettingsPage_Unloaded;
+
+            SubscribePowerEvents();
         }
 
         // =========================================================
@@ -83,11 +80,14 @@ namespace CarShell.Pages
             RoutedEventArgs e)
         {
             LoadVersionInformation();
-
             InitializeDateTimeControls();
-            LoadSystemControls();
-            UpdateDateTimeText();
 
+            savedUserSettings =
+                UserSettingsService.Load();
+
+            await ApplySavedSystemSettingsAsync();
+
+            UpdateDateTimeText();
             clockTimer.Start();
 
             ShowPanel(
@@ -106,8 +106,11 @@ namespace CarShell.Pages
 
             brightnessCancellationTokenSource?.Cancel();
             brightnessCancellationTokenSource?.Dispose();
-
             brightnessCancellationTokenSource = null;
+
+            systemSettingsSaveCancellationTokenSource?.Cancel();
+            systemSettingsSaveCancellationTokenSource?.Dispose();
+            systemSettingsSaveCancellationTokenSource = null;
         }
 
         private void ClockTimer_Tick(
@@ -115,6 +118,194 @@ namespace CarShell.Pages
             EventArgs e)
         {
             UpdateDateTimeText();
+        }
+
+        // =========================================================
+        // ПИТАНИЕ / ВОССТАНОВЛЕНИЕ ПОСЛЕ СНА
+        // =========================================================
+
+        private void SubscribePowerEvents()
+        {
+            if (powerEventsSubscribed)
+            {
+                return;
+            }
+
+            SystemEvents.PowerModeChanged +=
+                SystemEvents_PowerModeChanged;
+
+            powerEventsSubscribed = true;
+        }
+
+        private void SystemEvents_PowerModeChanged(
+            object sender,
+            PowerModeChangedEventArgs e)
+        {
+            if (e.Mode != PowerModes.Resume)
+            {
+                return;
+            }
+
+            Dispatcher.BeginInvoke(
+                new Action(async () =>
+                {
+                    await Task.Delay(1800);
+
+                    savedUserSettings =
+                        UserSettingsService.Load();
+
+                    await ApplySavedSystemSettingsAsync();
+                }));
+        }
+
+        // =========================================================
+        // СОХРАНЕНИЕ ЯРКОСТИ И ГРОМКОСТИ
+        // =========================================================
+
+        private async Task ApplySavedSystemSettingsAsync()
+        {
+            systemControlsLoading = true;
+
+            try
+            {
+                int brightness =
+                    Math.Clamp(
+                        savedUserSettings.Brightness,
+                        0,
+                        100);
+
+                int volume =
+                    Math.Clamp(
+                        savedUserSettings.Volume,
+                        0,
+                        100);
+
+                bool brightnessApplied =
+                    await ApplyBrightnessWithRetryAsync(
+                        brightness);
+
+                bool volumeApplied =
+                    await ApplyVolumeWithRetryAsync(
+                        volume,
+                        savedUserSettings.IsMuted);
+
+                BrightnessSlider.Value =
+                    brightness;
+
+                BrightnessValueText.Text =
+                    $"{brightness}%";
+
+                BrightnessSlider.IsEnabled =
+                    brightnessApplied;
+
+                BrightnessErrorText.Text =
+                    brightnessApplied
+                        ? string.Empty
+                        : "Не удалось восстановить яркость";
+
+                BrightnessErrorText.Visibility =
+                    brightnessApplied
+                        ? Visibility.Collapsed
+                        : Visibility.Visible;
+
+                VolumeSlider.Value =
+                    volume;
+
+                VolumeValueText.Text =
+                    $"{volume}%";
+
+                VolumeSlider.IsEnabled =
+                    volumeApplied;
+
+                MuteToggle.IsChecked =
+                    savedUserSettings.IsMuted;
+
+                MuteStatusText.Text =
+                    savedUserSettings.IsMuted
+                        ? "Звук выключен"
+                        : "Звук включён";
+            }
+            finally
+            {
+                systemControlsLoading = false;
+            }
+        }
+
+        private static async Task<bool>
+            ApplyBrightnessWithRetryAsync(
+                int brightness)
+        {
+            for (int attempt = 0;
+                 attempt < 5;
+                 attempt++)
+            {
+                bool result =
+                    await Task.Run(
+                        () =>
+                            BrightnessService.SetBrightness(
+                                brightness));
+
+                if (result)
+                {
+                    return true;
+                }
+
+                await Task.Delay(700);
+            }
+
+            return false;
+        }
+
+        private static async Task<bool>
+            ApplyVolumeWithRetryAsync(
+                int volume,
+                bool muted)
+        {
+            for (int attempt = 0;
+                 attempt < 5;
+                 attempt++)
+            {
+                bool volumeResult =
+                    AudioService.SetVolume(volume);
+
+                bool muteResult =
+                    AudioService.SetMuted(muted);
+
+                if (volumeResult &&
+                    muteResult)
+                {
+                    return true;
+                }
+
+                await Task.Delay(700);
+            }
+
+            return false;
+        }
+
+        private async void ScheduleSystemSettingsSave()
+        {
+            systemSettingsSaveCancellationTokenSource?.Cancel();
+            systemSettingsSaveCancellationTokenSource?.Dispose();
+
+            systemSettingsSaveCancellationTokenSource =
+                new CancellationTokenSource();
+
+            CancellationToken token =
+                systemSettingsSaveCancellationTokenSource.Token;
+
+            try
+            {
+                await Task.Delay(
+                    400,
+                    token);
+
+                UserSettingsService.Save(
+                    savedUserSettings);
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
 
         // =========================================================
@@ -445,6 +636,11 @@ namespace CarShell.Pages
                 {
                     BrightnessErrorText.Visibility =
                         Visibility.Collapsed;
+
+                    savedUserSettings.Brightness =
+                        brightness;
+
+                    ScheduleSystemSettingsSave();
                 }
                 else
                 {
@@ -457,7 +653,6 @@ namespace CarShell.Pages
             }
             catch (OperationCanceledException)
             {
-                // Пользователь продолжил двигать ползунок.
             }
             catch (Exception ex)
             {
@@ -492,6 +687,11 @@ namespace CarShell.Pages
                 return;
             }
 
+            savedUserSettings.Volume =
+                volume;
+
+            ScheduleSystemSettingsSave();
+
             if (volume > 0 &&
                 MuteToggle.IsChecked == true)
             {
@@ -503,6 +703,11 @@ namespace CarShell.Pages
 
                     MuteToggle.IsChecked = false;
                     MuteStatusText.Text = "Звук включён";
+
+                    savedUserSettings.IsMuted =
+                        false;
+
+                    ScheduleSystemSettingsSave();
                 }
                 finally
                 {
@@ -533,6 +738,10 @@ namespace CarShell.Pages
                         ? "Звук выключен"
                         : "Звук включён";
 
+                savedUserSettings.IsMuted =
+                    muted;
+
+                ScheduleSystemSettingsSave();
                 return;
             }
 
@@ -1004,7 +1213,6 @@ namespace CarShell.Pages
             wifiNetworksLoading = true;
 
             WifiNetworksStackPanel.Children.Clear();
-
             WifiNetworksStatusText.Text =
                 "Поиск доступных сетей...";
 
@@ -1167,7 +1375,8 @@ namespace CarShell.Pages
                                 255)),
 
                     FontSize = 20,
-                    FontWeight = FontWeights.SemiBold
+                    FontWeight =
+                        FontWeights.SemiBold
                 });
 
             signalPanel.Children.Add(
@@ -1366,10 +1575,6 @@ namespace CarShell.Pages
 
             return "▰▱▱";
         }
-
-        // =========================================================
-        // WI-FI — ПОДКЛЮЧЕНИЕ
-        // =========================================================
 
         private async void WifiNetworkActionButton_Click(
             object sender,
@@ -1641,7 +1846,7 @@ namespace CarShell.Pages
         }
 
         // =========================================================
-        // BLUETOOTH — СОСТОЯНИЕ
+        // BLUETOOTH
         // =========================================================
 
         private async Task LoadBluetoothStateAsync()
@@ -1770,10 +1975,6 @@ namespace CarShell.Pages
             await LoadBluetoothStateAsync();
         }
 
-        // =========================================================
-        // BLUETOOTH — СТРАНИЦА УСТРОЙСТВ
-        // =========================================================
-
         private async void OpenBluetoothButton_Click(
             object sender,
             RoutedEventArgs e)
@@ -1828,10 +2029,6 @@ namespace CarShell.Pages
         {
             await RefreshBluetoothDevicesAsync();
         }
-
-        // =========================================================
-        // BLUETOOTH — ПОИСК
-        // =========================================================
 
         private async Task RefreshBluetoothDevicesAsync()
         {
@@ -2012,10 +2209,6 @@ namespace CarShell.Pages
                         18)
             };
         }
-
-        // =========================================================
-        // BLUETOOTH — КАРТОЧКА
-        // =========================================================
 
         private Border CreateBluetoothDeviceCard(
             BluetoothDeviceInfo device)
@@ -2337,10 +2530,6 @@ namespace CarShell.Pages
             };
         }
 
-        // =========================================================
-        // BLUETOOTH — СОПРЯЖЕНИЕ
-        // =========================================================
-
         private async void BluetoothPairButton_Click(
             object sender,
             RoutedEventArgs e)
@@ -2380,10 +2569,6 @@ namespace CarShell.Pages
                     true;
             }
         }
-
-        // =========================================================
-        // BLUETOOTH — ПОДКЛЮЧЕНИЕ И ОТКЛЮЧЕНИЕ
-        // =========================================================
 
         private async void BluetoothConnectionButton_Click(
             object sender,
@@ -2440,10 +2625,6 @@ namespace CarShell.Pages
                     true;
             }
         }
-
-        // =========================================================
-        // BLUETOOTH — УДАЛЕНИЕ СОПРЯЖЕНИЯ
-        // =========================================================
 
         private async void BluetoothRemoveButton_Click(
             object sender,

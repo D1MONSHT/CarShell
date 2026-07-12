@@ -348,31 +348,34 @@
         </Style>
 
         <!-- СЕНСОРНАЯ ПРОКРУТКА -->
+        <!-- СЕНСОРНАЯ ПРОКРУТКА БЕЗ ВИДИМОЙ ПОЛОСЫ -->
         <Style TargetType="ScrollViewer">
 
             <Setter Property="VerticalScrollBarVisibility"
-                    Value="Auto"/>
+            Value="Hidden"/>
 
             <Setter Property="HorizontalScrollBarVisibility"
-                    Value="Disabled"/>
+            Value="Disabled"/>
 
             <Setter Property="PanningMode"
-                    Value="VerticalOnly"/>
+            Value="VerticalOnly"/>
 
             <Setter Property="PanningDeceleration"
-                    Value="0.002"/>
+            Value="0.0015"/>
 
             <Setter Property="PanningRatio"
-                    Value="1.2"/>
-
-            <Setter Property="IsManipulationEnabled"
-                    Value="True"/>
+            Value="1.15"/>
 
             <Setter Property="CanContentScroll"
-                    Value="False"/>
+            Value="False"/>
+
+            <Setter Property="IsManipulationEnabled"
+            Value="True"/>
+
+            <Setter Property="Focusable"
+            Value="False"/>
 
         </Style>
-
     </UserControl.Resources>
 
     <Grid Margin="26">
