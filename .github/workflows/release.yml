@@ -24,11 +24,20 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
+      - name: Show .NET version
+        shell: pwsh
+        run: |
+          dotnet --version
+          dotnet --list-sdks
+
       - name: Get version from VersionInfo.cs
         id: version
         shell: pwsh
         run: |
-          $file = Get-ChildItem -Path "CarShell" -Recurse -Filter "VersionInfo.cs" |
+          $file = Get-ChildItem `
+            -Path "CarShell" `
+            -Recurse `
+            -Filter "VersionInfo.cs" |
             Select-Object -First 1
 
           if (-not $file) {
@@ -44,10 +53,23 @@ jobs:
             throw "Version not found in VersionInfo.cs"
           }
 
+          if ([string]::IsNullOrWhiteSpace($version)) {
+            throw "Version is empty"
+          }
+
           $tag = "v$version"
 
-          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "version=$version" |
+            Out-File `
+              -FilePath $env:GITHUB_OUTPUT `
+              -Append `
+              -Encoding utf8
+
+          "tag=$tag" |
+            Out-File `
+              -FilePath $env:GITHUB_OUTPUT `
+              -Append `
+              -Encoding utf8
 
           Write-Host "Version: $version"
           Write-Host "Tag: $tag"
@@ -59,7 +81,9 @@ jobs:
 
           git fetch --tags
 
-          if (git tag -l $tag) {
+          $existingTag = git tag -l $tag
+
+          if ($existingTag) {
             Write-Host "Tag $tag already exists"
           }
           else {
@@ -68,31 +92,57 @@ jobs:
 
             git tag $tag
             git push origin $tag
+
+            Write-Host "Created tag $tag"
           }
 
       - name: Clean output directories
         shell: pwsh
         run: |
-          Remove-Item "publish" -Recurse -Force -ErrorAction SilentlyContinue
-          Remove-Item "updater-publish" -Recurse -Force -ErrorAction SilentlyContinue
-          Remove-Item "CarShell-win-x64.zip" -Force -ErrorAction SilentlyContinue
+          Remove-Item `
+            "publish" `
+            -Recurse `
+            -Force `
+            -ErrorAction SilentlyContinue
 
-      - name: Restore CarShell
-        shell: pwsh
-        run: dotnet restore "CarShell/CarShell.csproj"
+          Remove-Item `
+            "updater-publish" `
+            -Recurse `
+            -Force `
+            -ErrorAction SilentlyContinue
 
-      - name: Restore Updater
+          Remove-Item `
+            "CarShell-win-x64.zip" `
+            -Force `
+            -ErrorAction SilentlyContinue
+
+      - name: Verify project paths
         shell: pwsh
-        run: dotnet restore "Updater/Updater.csproj"
+        run: |
+          if (-not (Test-Path "CarShell/CarShell.csproj")) {
+            throw "CarShell/CarShell.csproj not found"
+          }
+
+          if (-not (Test-Path "Updater/Updater.csproj")) {
+            Write-Host "Repository project files:"
+
+            Get-ChildItem `
+              -Path "." `
+              -Recurse `
+              -Filter "*.csproj" |
+              Select-Object FullName
+
+            throw "Updater/Updater.csproj not found"
+          }
 
       - name: Publish CarShell
         shell: pwsh
         run: |
           dotnet publish "CarShell/CarShell.csproj" `
             -c Release `
+            -f net8.0-windows `
             -r win-x64 `
             --self-contained true `
-            --no-restore `
             -o "publish" `
             /p:PublishSingleFile=true `
             /p:IncludeNativeLibrariesForSelfExtract=true `
@@ -105,9 +155,9 @@ jobs:
         run: |
           dotnet publish "Updater/Updater.csproj" `
             -c Release `
+            -f net8.0-windows `
             -r win-x64 `
             --self-contained true `
-            --no-restore `
             -o "updater-publish" `
             /p:PublishSingleFile=true `
             /p:IncludeNativeLibrariesForSelfExtract=true `
@@ -115,11 +165,17 @@ jobs:
             /p:DebugType=None `
             /p:DebugSymbols=false
 
-      - name: Add Updater to release
+      - name: Add Updater to CarShell publish
         shell: pwsh
         run: |
           if (-not (Test-Path "updater-publish/Updater.exe")) {
-            Get-ChildItem "updater-publish" -Recurse
+            Write-Host "Updater publish contents:"
+
+            Get-ChildItem `
+              -Path "updater-publish" `
+              -Recurse |
+              Select-Object FullName, Length
+
             throw "Updater.exe was not created"
           }
 
@@ -128,17 +184,40 @@ jobs:
             -Destination "publish/Updater.exe" `
             -Force
 
+          Write-Host "Updater.exe added to publish"
+
       - name: Remove Maps and unnecessary files
         shell: pwsh
         run: |
-          Remove-Item "publish/Maps" -Recurse -Force -ErrorAction SilentlyContinue
-          Remove-Item "publish/maps" -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item `
+            "publish/Maps" `
+            -Recurse `
+            -Force `
+            -ErrorAction SilentlyContinue
 
-          Get-ChildItem "publish" -Recurse -Filter "*.pmtiles" |
-            Remove-Item -Force -ErrorAction SilentlyContinue
+          Remove-Item `
+            "publish/maps" `
+            -Recurse `
+            -Force `
+            -ErrorAction SilentlyContinue
 
-          Get-ChildItem "publish" -Recurse -Filter "*.pdb" |
-            Remove-Item -Force -ErrorAction SilentlyContinue
+          Get-ChildItem `
+            -Path "publish" `
+            -Recurse `
+            -Filter "*.pmtiles" `
+            -ErrorAction SilentlyContinue |
+            Remove-Item `
+              -Force `
+              -ErrorAction SilentlyContinue
+
+          Get-ChildItem `
+            -Path "publish" `
+            -Recurse `
+            -Filter "*.pdb" `
+            -ErrorAction SilentlyContinue |
+            Remove-Item `
+              -Force `
+              -ErrorAction SilentlyContinue
 
       - name: Verify release files
         shell: pwsh
@@ -151,6 +230,10 @@ jobs:
             throw "Updater.exe not found"
           }
 
+          if (Test-Path "publish/Maps") {
+            throw "Maps directory is still present"
+          }
+
           $mapFiles = Get-ChildItem `
             -Path "publish" `
             -Recurse `
@@ -158,10 +241,21 @@ jobs:
             -ErrorAction SilentlyContinue
 
           if ($mapFiles) {
+            Write-Host "Unexpected map files:"
+
+            $mapFiles |
+              ForEach-Object {
+                Write-Host $_.FullName
+              }
+
             throw "PMTiles files are still present"
           }
 
-          Get-ChildItem "publish" -Recurse |
+          Write-Host "Release contents:"
+
+          Get-ChildItem `
+            -Path "publish" `
+            -Recurse |
             Select-Object FullName, Length
 
       - name: Create ZIP
@@ -178,9 +272,13 @@ jobs:
           }
 
           $zip = Get-Item "CarShell-win-x64.zip"
-          $size = [math]::Round($zip.Length / 1MB, 2)
 
-          Write-Host "ZIP size: $size MB"
+          $sizeMb = [math]::Round(
+            $zip.Length / 1MB,
+            2
+          )
+
+          Write-Host "ZIP size: $sizeMb MB"
 
       - name: Create or update Release
         uses: softprops/action-gh-release@v2
@@ -198,6 +296,8 @@ jobs:
             - папка Maps
             - файлы PMTiles
             - отладочные PDB-файлы
+
+            Локальная папка Maps при обновлении сохраняется.
           files: CarShell-win-x64.zip
           make_latest: true
           overwrite_files: true
