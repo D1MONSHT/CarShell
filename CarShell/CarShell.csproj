@@ -9,6 +9,7 @@
 
 		<PlatformTarget>x64</PlatformTarget>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
 	</PropertyGroup>
 
 	<!-- Изображение автомобиля -->
@@ -33,26 +34,23 @@
 
 	<!-- NuGet-пакеты -->
 	<ItemGroup>
-		<PackageReference Include="BruTile.MbTiles"
-						  Version="6.0.0" />
+		<PackageReference Include="BruTile.MbTiles" Version="6.0.0" />
 
-		<PackageReference Include="GMap.NET.Core"
-						  Version="2.1.7" />
+		<PackageReference Include="GMap.NET.Core" Version="2.1.7" />
 
-		<PackageReference Include="GMap.NET.WinPresentation"
-						  Version="2.1.7" />
+		<PackageReference Include="GMap.NET.WinPresentation" Version="2.1.7" />
 
-		<PackageReference Include="Mapsui.Wpf"
-						  Version="5.1.0" />
+		<PackageReference Include="Mapsui.Wpf" Version="5.1.0" />
 
-		<PackageReference Include="Microsoft.Web.WebView2"
-						  Version="1.0.4022.49" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4022.49" />
 
-		<PackageReference Include="Newtonsoft.Json"
-						  Version="13.0.4" />
+		<PackageReference Include="NAudio" Version="2.3.0" />
 
-		<PackageReference Include="System.IO.Ports"
-						  Version="10.0.9" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+
+		<PackageReference Include="System.IO.Ports" Version="10.0.9" />
+
+		<PackageReference Include="System.Management" Version="10.0.9" />
 	</ItemGroup>
 
 	<!--
@@ -60,62 +58,42 @@
       в известную временную папку и копируем
       Updater.exe рядом с CarShell.
   -->
-	<Target Name="BuildAndCopyUpdater"
-        AfterTargets="Build"
-        Condition="'$(DesignTimeBuild)' != 'true'">
+	<Target Name="BuildAndCopyUpdater" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
 
 		<PropertyGroup>
 			<UpdaterProjectPath>$(MSBuildProjectDirectory)\..\Updater\Updater.csproj</UpdaterProjectPath>
 			<UpdaterOutputDirectory>$(MSBuildProjectDirectory)\..\Updater\bin\$(Configuration)\net8.0-windows\win-x64\</UpdaterOutputDirectory>
 		</PropertyGroup>
 
-		<Message Text="Проект Updater: $(UpdaterProjectPath)"
-				 Importance="High" />
+		<Message Text="Проект Updater: $(UpdaterProjectPath)" Importance="High" />
 
-		<Message Text="Папка Updater: $(UpdaterOutputDirectory)"
-				 Importance="High" />
+		<Message Text="Папка Updater: $(UpdaterOutputDirectory)" Importance="High" />
 
-		<Error Condition="!Exists('$(UpdaterProjectPath)')"
-			   Text="Не найден проект Updater: $(UpdaterProjectPath)" />
+		<Error Condition="!Exists('$(UpdaterProjectPath)')" Text="Не найден проект Updater: $(UpdaterProjectPath)" />
 
-		<MSBuild Projects="$(UpdaterProjectPath)"
-				 Targets="Restore"
-				 Properties="Configuration=$(Configuration);RuntimeIdentifier=win-x64" />
+		<MSBuild Projects="$(UpdaterProjectPath)" Targets="Restore" Properties="Configuration=$(Configuration);RuntimeIdentifier=win-x64" />
 
-		<MSBuild Projects="$(UpdaterProjectPath)"
-				 Targets="Build"
-				 Properties="Configuration=$(Configuration);RuntimeIdentifier=win-x64" />
+		<MSBuild Projects="$(UpdaterProjectPath)" Targets="Build" Properties="Configuration=$(Configuration);RuntimeIdentifier=win-x64" />
 
 		<ItemGroup>
-			<UpdaterFiles Include="$(UpdaterOutputDirectory)Updater.exe"
-						  Condition="Exists('$(UpdaterOutputDirectory)Updater.exe')" />
+			<UpdaterFiles Include="$(UpdaterOutputDirectory)Updater.exe" Condition="Exists('$(UpdaterOutputDirectory)Updater.exe')" />
 
-			<UpdaterFiles Include="$(UpdaterOutputDirectory)Updater.dll"
-						  Condition="Exists('$(UpdaterOutputDirectory)Updater.dll')" />
+			<UpdaterFiles Include="$(UpdaterOutputDirectory)Updater.dll" Condition="Exists('$(UpdaterOutputDirectory)Updater.dll')" />
 
-			<UpdaterFiles Include="$(UpdaterOutputDirectory)Updater.deps.json"
-						  Condition="Exists('$(UpdaterOutputDirectory)Updater.deps.json')" />
+			<UpdaterFiles Include="$(UpdaterOutputDirectory)Updater.deps.json" Condition="Exists('$(UpdaterOutputDirectory)Updater.deps.json')" />
 
-			<UpdaterFiles Include="$(UpdaterOutputDirectory)Updater.runtimeconfig.json"
-						  Condition="Exists('$(UpdaterOutputDirectory)Updater.runtimeconfig.json')" />
+			<UpdaterFiles Include="$(UpdaterOutputDirectory)Updater.runtimeconfig.json" Condition="Exists('$(UpdaterOutputDirectory)Updater.runtimeconfig.json')" />
 		</ItemGroup>
 
-		<Message Text="Найденные файлы Updater: @(UpdaterFiles)"
-				 Importance="High" />
+		<Message Text="Найденные файлы Updater: @(UpdaterFiles)" Importance="High" />
 
-		<Error Condition="'@(UpdaterFiles)' == ''"
-			   Text="Файлы Updater не найдены в папке: $(UpdaterOutputDirectory)" />
+		<Error Condition="'@(UpdaterFiles)' == ''" Text="Файлы Updater не найдены в папке: $(UpdaterOutputDirectory)" />
 
-		<Copy SourceFiles="@(UpdaterFiles)"
-			  DestinationFolder="$(TargetDir)"
-			  SkipUnchangedFiles="true"
-			  OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(UpdaterFiles)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 
-		<Error Condition="!Exists('$(TargetDir)Updater.exe')"
-			   Text="Updater.exe не был скопирован в папку CarShell: $(TargetDir)" />
+		<Error Condition="!Exists('$(TargetDir)Updater.exe')" Text="Updater.exe не был скопирован в папку CarShell: $(TargetDir)" />
 
-		<Message Text="Updater.exe успешно скопирован в: $(TargetDir)Updater.exe"
-				 Importance="High" />
+		<Message Text="Updater.exe успешно скопирован в: $(TargetDir)Updater.exe" Importance="High" />
 
 	</Target>
 

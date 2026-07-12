@@ -266,6 +266,80 @@
             </Setter>
 
         </Style>
+        <!-- Подпись поля -->
+        <Style x:Key="FieldLabelStyle"
+       TargetType="TextBlock">
+
+            <Setter Property="Foreground"
+            Value="#8092A8"/>
+
+            <Setter Property="FontSize"
+            Value="14"/>
+
+            <Setter Property="Margin"
+            Value="0,0,0,8"/>
+
+        </Style>
+
+        <!-- Тёмный ComboBox -->
+        <Style x:Key="DarkComboBoxStyle"
+       TargetType="ComboBox">
+
+            <Setter Property="Height"
+            Value="54"/>
+
+            <Setter Property="Foreground"
+            Value="White"/>
+
+            <Setter Property="Background"
+            Value="#111C29"/>
+
+            <Setter Property="BorderBrush"
+            Value="#26394D"/>
+
+            <Setter Property="BorderThickness"
+            Value="1"/>
+
+            <Setter Property="FontSize"
+            Value="18"/>
+
+            <Setter Property="Padding"
+            Value="14,0"/>
+
+            <Setter Property="VerticalContentAlignment"
+            Value="Center"/>
+
+        </Style>
+
+        <!-- Тёмное поле даты -->
+        <Style x:Key="DarkDateFieldStyle"
+       TargetType="TextBox">
+
+            <Setter Property="Height"
+            Value="54"/>
+
+            <Setter Property="Foreground"
+            Value="White"/>
+
+            <Setter Property="Background"
+            Value="#111C29"/>
+
+            <Setter Property="BorderBrush"
+            Value="#26394D"/>
+
+            <Setter Property="BorderThickness"
+            Value="1"/>
+
+            <Setter Property="FontSize"
+            Value="18"/>
+
+            <Setter Property="Padding"
+            Value="16,0"/>
+
+            <Setter Property="VerticalContentAlignment"
+            Value="Center"/>
+
+        </Style>
 
     </UserControl.Resources>
 
@@ -647,99 +721,529 @@
                                    Foreground="#778A9E"
                                    Margin="0,5,0,24"/>
 
+                        <!-- ЯРКОСТЬ -->
                         <Border Style="{StaticResource SettingsCardStyle}">
 
-                            <Grid>
+                            <StackPanel>
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                                <Grid>
 
-                                <StackPanel>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
 
-                                    <TextBlock Text="Яркость экрана"
-                                               FontSize="21"
-                                               FontWeight="SemiBold"
-                                               Foreground="White"/>
+                                    <StackPanel>
 
-                                    <TextBlock Text="Изменение подсветки дисплея Surface"
-                                               Foreground="#8295A8"
-                                               FontSize="15"
-                                               Margin="0,6,0,0"/>
+                                        <TextBlock Text="Яркость экрана"
+                           FontSize="21"
+                           FontWeight="SemiBold"
+                           Foreground="White"/>
 
-                                </StackPanel>
+                                        <TextBlock Text="Управление подсветкой дисплея Surface"
+                           Foreground="#8295A8"
+                           FontSize="15"
+                           Margin="0,6,0,0"/>
 
-                                <Button Grid.Column="1"
-                                        Content="Настроить"
-                                        Style="{StaticResource ActionButtonStyle}"
-                                        Click="BrightnessButton_Click"/>
+                                    </StackPanel>
 
-                            </Grid>
+                                    <TextBlock x:Name="BrightnessValueText"
+                       Grid.Column="1"
+                       Text="—%"
+                       Foreground="#4CA9DD"
+                       FontSize="22"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"/>
+
+                                </Grid>
+
+                                <Slider x:Name="BrightnessSlider"
+                Minimum="0"
+                Maximum="100"
+                SmallChange="1"
+                LargeChange="10"
+                ValueChanged="BrightnessSlider_ValueChanged"
+                Margin="0,22,0,0"
+                Height="42"/>
+
+                                <TextBlock x:Name="BrightnessErrorText"
+                   Visibility="Collapsed"
+                   Text="Управление яркостью недоступно"
+                   Foreground="#E57373"
+                   FontSize="14"
+                   Margin="0,8,0,0"/>
+
+                            </StackPanel>
 
                         </Border>
 
+                        <!-- ГРОМКОСТЬ -->
                         <Border Style="{StaticResource SettingsCardStyle}">
 
-                            <Grid>
+                            <StackPanel>
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                                <Grid>
 
-                                <StackPanel>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
 
-                                    <TextBlock Text="Громкость"
-                                               FontSize="21"
-                                               FontWeight="SemiBold"
-                                               Foreground="White"/>
+                                    <StackPanel>
 
-                                    <TextBlock Text="Управление общей громкостью Windows"
-                                               Foreground="#8295A8"
-                                               FontSize="15"
-                                               Margin="0,6,0,0"/>
+                                        <TextBlock Text="Громкость"
+                           FontSize="21"
+                           FontWeight="SemiBold"
+                           Foreground="White"/>
 
-                                </StackPanel>
+                                        <TextBlock Text="Общая громкость аудиосистемы Windows"
+                           Foreground="#8295A8"
+                           FontSize="15"
+                           Margin="0,6,0,0"/>
 
-                                <Button Grid.Column="1"
-                                        Content="Настроить"
-                                        Style="{StaticResource ActionButtonStyle}"
-                                        Click="VolumeButton_Click"/>
+                                    </StackPanel>
 
-                            </Grid>
+                                    <TextBlock x:Name="VolumeValueText"
+                       Grid.Column="1"
+                       Text="—%"
+                       Foreground="#4CA9DD"
+                       FontSize="22"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"/>
+
+                                </Grid>
+
+                                <Slider x:Name="VolumeSlider"
+                Minimum="0"
+                Maximum="100"
+                SmallChange="1"
+                LargeChange="10"
+                ValueChanged="VolumeSlider_ValueChanged"
+                Margin="0,22,0,0"
+                Height="42"/>
+
+                                <Grid Margin="0,14,0,0">
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel VerticalAlignment="Center">
+
+                                        <TextBlock Text="Отключить звук"
+                           Foreground="White"
+                           FontSize="17"/>
+
+                                        <TextBlock x:Name="MuteStatusText"
+                           Text="Звук включён"
+                           Foreground="#8295A8"
+                           FontSize="14"
+                           Margin="0,4,0,0"/>
+
+                                    </StackPanel>
+
+                                    <CheckBox x:Name="MuteToggle"
+                      Grid.Column="1"
+                      Style="{StaticResource ToggleSwitchStyle}"
+                      VerticalAlignment="Center"
+                      Click="MuteToggle_Click"/>
+
+                                </Grid>
+
+                            </StackPanel>
 
                         </Border>
+                        <!-- ДАТА И ВРЕМЯ -->
+                        <!-- ДАТА И ВРЕМЯ -->
+                        <Border Style="{StaticResource SettingsCardStyle}"
+        Padding="28">
 
-                        <Border Style="{StaticResource SettingsCardStyle}">
+                            <StackPanel>
 
-                            <Grid>
+                                <!-- Верхняя часть -->
+                                <Grid>
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="18"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
 
-                                <StackPanel>
+                                    <Border Width="62"
+                    Height="62"
+                    Background="#12395B"
+                    CornerRadius="16">
 
-                                    <TextBlock Text="Дата и время"
-                                               FontSize="21"
-                                               FontWeight="SemiBold"
-                                               Foreground="White"/>
+                                        <TextBlock Text="◷"
+                           Foreground="#2A9DFF"
+                           FontSize="38"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
 
-                                    <TextBlock x:Name="DateTimeStatusText"
-                                               Foreground="#8295A8"
-                                               FontSize="15"
-                                               Margin="0,6,0,0"/>
+                                    </Border>
 
-                                </StackPanel>
+                                    <StackPanel Grid.Column="2"
+                        VerticalAlignment="Center">
 
-                                <Button Grid.Column="1"
-                                        Content="Открыть"
-                                        Style="{StaticResource ActionButtonStyle}"
-                                        Click="DateTimeButton_Click"/>
+                                        <TextBlock Text="Дата и время"
+                           Foreground="White"
+                           FontSize="24"
+                           FontWeight="SemiBold"/>
 
-                            </Grid>
+                                        <TextBlock Text="Текущие системные дата и время"
+                           Foreground="#8295A8"
+                           FontSize="15"
+                           Margin="0,6,0,0"/>
+
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="3"
+                        HorizontalAlignment="Right">
+
+                                        <TextBlock x:Name="CurrentTimeText"
+                           Text="17:07"
+                           Foreground="White"
+                           FontSize="34"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Right"/>
+
+                                        <TextBlock x:Name="CurrentDateText"
+                           Text="12 июля 2026 г."
+                           Foreground="#D7E0EA"
+                           FontSize="16"
+                           Margin="0,4,0,0"
+                           HorizontalAlignment="Right"/>
+
+                                        <TextBlock x:Name="CurrentDayOfWeekText"
+                           Text="Воскресенье"
+                           Foreground="#8295A8"
+                           FontSize="14"
+                           Margin="0,3,0,0"
+                           HorizontalAlignment="Right"/>
+
+                                    </StackPanel>
+
+                                </Grid>
+
+                                <Border Height="1"
+                Background="#263746"
+                Margin="0,22,0,20"/>
+
+                                <!-- Редактор даты и времени -->
+                                <Grid>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="24"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- ДАТА -->
+                                    <Border Grid.Column="0"
+                    Background="#0D1722"
+                    BorderBrush="#223548"
+                    BorderThickness="1"
+                    CornerRadius="16"
+                    Padding="20">
+
+                                        <StackPanel>
+
+                                            <TextBlock Text="Дата"
+                               Foreground="#8295A8"
+                               FontSize="15"/>
+
+                                            <TextBlock x:Name="SelectedDateText"
+                               Text="12 июля 2026"
+                               Foreground="White"
+                               FontSize="24"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center"
+                               Margin="0,14,0,18"/>
+
+                                            <!-- День -->
+                                            <Grid Margin="0,0,0,12">
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="110"/>
+                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="60"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Text="День"
+                                   Foreground="#B9C6D4"
+                                   FontSize="17"
+                                   VerticalAlignment="Center"/>
+
+                                                <Button Grid.Column="1"
+                                Content="−"
+                                FontSize="26"
+                                Background="#1A2A3B"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Height="50"
+                                Click="DayMinusButton_Click"/>
+
+                                                <TextBlock x:Name="DayValueText"
+                                   Grid.Column="2"
+                                   Text="12"
+                                   Foreground="#2A9DFF"
+                                   FontSize="25"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+
+                                                <Button Grid.Column="3"
+                                Content="+"
+                                FontSize="25"
+                                Background="#1A2A3B"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Height="50"
+                                Click="DayPlusButton_Click"/>
+
+                                            </Grid>
+
+                                            <!-- Месяц -->
+                                            <Grid Margin="0,0,0,12">
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="110"/>
+                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="60"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Text="Месяц"
+                                   Foreground="#B9C6D4"
+                                   FontSize="17"
+                                   VerticalAlignment="Center"/>
+
+                                                <Button Grid.Column="1"
+                                Content="−"
+                                FontSize="26"
+                                Background="#1A2A3B"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Height="50"
+                                Click="MonthMinusButton_Click"/>
+
+                                                <TextBlock x:Name="MonthValueText"
+                                   Grid.Column="2"
+                                   Text="Июль"
+                                   Foreground="#2A9DFF"
+                                   FontSize="22"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+
+                                                <Button Grid.Column="3"
+                                Content="+"
+                                FontSize="25"
+                                Background="#1A2A3B"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Height="50"
+                                Click="MonthPlusButton_Click"/>
+
+                                            </Grid>
+
+                                            <!-- Год -->
+                                            <Grid>
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="110"/>
+                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="60"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Text="Год"
+                                   Foreground="#B9C6D4"
+                                   FontSize="17"
+                                   VerticalAlignment="Center"/>
+
+                                                <Button Grid.Column="1"
+                                Content="−"
+                                FontSize="26"
+                                Background="#1A2A3B"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Height="50"
+                                Click="YearMinusButton_Click"/>
+
+                                                <TextBlock x:Name="YearValueText"
+                                   Grid.Column="2"
+                                   Text="2026"
+                                   Foreground="#2A9DFF"
+                                   FontSize="25"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+
+                                                <Button Grid.Column="3"
+                                Content="+"
+                                FontSize="25"
+                                Background="#1A2A3B"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Height="50"
+                                Click="YearPlusButton_Click"/>
+
+                                            </Grid>
+
+                                        </StackPanel>
+
+                                    </Border>
+
+                                    <!-- ВРЕМЯ -->
+                                    <Border Grid.Column="2"
+                    Background="#0D1722"
+                    BorderBrush="#223548"
+                    BorderThickness="1"
+                    CornerRadius="16"
+                    Padding="20">
+
+                                        <StackPanel>
+
+                                            <TextBlock Text="Время"
+                               Foreground="#8295A8"
+                               FontSize="15"/>
+
+                                            <TextBlock x:Name="SelectedTimeText"
+                               Text="17:07"
+                               Foreground="White"
+                               FontSize="36"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center"
+                               Margin="0,14,0,24"/>
+
+                                            <!-- Часы -->
+                                            <Grid Margin="0,0,0,18">
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="110"/>
+                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="60"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Text="Часы"
+                                   Foreground="#B9C6D4"
+                                   FontSize="17"
+                                   VerticalAlignment="Center"/>
+
+                                                <Button Grid.Column="1"
+                                Content="−"
+                                FontSize="26"
+                                Background="#1A2A3B"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Height="56"
+                                Click="HourMinusButton_Click"/>
+
+                                                <TextBlock x:Name="HourValueText"
+                                   Grid.Column="2"
+                                   Text="17"
+                                   Foreground="#2A9DFF"
+                                   FontSize="30"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+
+                                                <Button Grid.Column="3"
+                                Content="+"
+                                FontSize="25"
+                                Background="#1A2A3B"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Height="56"
+                                Click="HourPlusButton_Click"/>
+
+                                            </Grid>
+
+                                            <!-- Минуты -->
+                                            <Grid>
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="110"/>
+                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="60"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Text="Минуты"
+                                   Foreground="#B9C6D4"
+                                   FontSize="17"
+                                   VerticalAlignment="Center"/>
+
+                                                <Button Grid.Column="1"
+                                Content="−"
+                                FontSize="26"
+                                Background="#1A2A3B"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Height="56"
+                                Click="MinuteMinusButton_Click"/>
+
+                                                <TextBlock x:Name="MinuteValueText"
+                                   Grid.Column="2"
+                                   Text="07"
+                                   Foreground="#2A9DFF"
+                                   FontSize="30"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+
+                                                <Button Grid.Column="3"
+                                Content="+"
+                                FontSize="25"
+                                Background="#1A2A3B"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Height="56"
+                                Click="MinutePlusButton_Click"/>
+
+                                            </Grid>
+
+                                        </StackPanel>
+
+                                    </Border>
+
+                                </Grid>
+
+                                <!-- Кнопки -->
+                                <Grid Margin="0,22,0,0">
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="190"/>
+                                        <ColumnDefinition Width="14"/>
+                                        <ColumnDefinition Width="240"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button Grid.Column="1"
+                    Content="✓  Применить"
+                    Style="{StaticResource ActionButtonStyle}"
+                    Click="ApplyDateTimeButton_Click"/>
+
+                                    <Button Grid.Column="3"
+                    Content="⟳  Синхронизировать"
+                    Style="{StaticResource ActionButtonStyle}"
+                    Background="#223548"
+                    Click="SynchronizeTimeButton_Click"/>
+
+                                </Grid>
+
+                                <TextBlock x:Name="DateTimeResultText"
+                   Text="Изменения применяются к системному времени Windows"
+                   Foreground="#71849A"
+                   FontSize="14"
+                   Margin="0,16,0,0"/>
+
+                            </StackPanel>
 
                         </Border>
 

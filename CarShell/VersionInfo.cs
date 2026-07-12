@@ -8,6 +8,6 @@ namespace CarShell
 {
     public static class VersionInfo
     {
-        public const string Version = "0.0.18";
+        public const string Version = "0.0.19";
     }
 }

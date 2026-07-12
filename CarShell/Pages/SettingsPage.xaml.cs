@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 using CarShell.Pages.Settings;
+using CarShell.Services;
 
 namespace CarShell.Pages
 {
@@ -11,6 +15,10 @@ namespace CarShell.Pages
     {
         private readonly MainWindow mainWindow;
         private readonly UpdateSettingsControl updateSettingsControl;
+        private readonly DispatcherTimer clockTimer;
+
+        private bool systemControlsLoading;
+        private CancellationTokenSource? brightnessCancellationTokenSource;
 
         public SettingsPage(MainWindow mainWindow)
         {
@@ -18,11 +26,18 @@ namespace CarShell.Pages
 
             this.mainWindow = mainWindow;
 
-            // Создаём экран обновлений один раз,
-            // чтобы его состояние не терялось при переключении разделов.
-            updateSettingsControl = new UpdateSettingsControl();
+            updateSettingsControl =
+                new UpdateSettingsControl();
+
+            clockTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+
+            clockTimer.Tick += ClockTimer_Tick;
 
             Loaded += SettingsPage_Loaded;
+            Unloaded += SettingsPage_Unloaded;
         }
 
         private void SettingsPage_Loaded(
@@ -30,11 +45,29 @@ namespace CarShell.Pages
             RoutedEventArgs e)
         {
             LoadVersionInformation();
+            InitializeDateTimeControls();
+            LoadSystemControls();
             UpdateDateTimeText();
+
+            clockTimer.Start();
 
             ShowPanel(
                 NetworkPanel,
                 NetworkNavigationButton);
+        }
+
+        private void SettingsPage_Unloaded(
+            object sender,
+            RoutedEventArgs e)
+        {
+            clockTimer.Stop();
+        }
+
+        private void ClockTimer_Tick(
+            object? sender,
+            EventArgs e)
+        {
+            UpdateDateTimeText();
         }
 
         private void LoadVersionInformation()
@@ -59,32 +92,417 @@ namespace CarShell.Pages
             }
         }
 
+        private void InitializeDateTimeControls()
+        {
+            selectedDateTime = DateTime.Now;
+            UpdateDateTimeEditor();
+        }
+        private void DayMinusButton_Click(
+    object sender,
+    RoutedEventArgs e)
+        {
+            selectedDateTime =
+                selectedDateTime.AddDays(-1);
+
+            UpdateDateTimeEditor();
+        }
+
+        private void DayPlusButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            selectedDateTime =
+                selectedDateTime.AddDays(1);
+
+            UpdateDateTimeEditor();
+        }
+
+        private void MonthMinusButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            selectedDateTime =
+                selectedDateTime.AddMonths(-1);
+
+            UpdateDateTimeEditor();
+        }
+
+        private void MonthPlusButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            selectedDateTime =
+                selectedDateTime.AddMonths(1);
+
+            UpdateDateTimeEditor();
+        }
+
+        private void YearMinusButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            selectedDateTime =
+                selectedDateTime.AddYears(-1);
+
+            UpdateDateTimeEditor();
+        }
+
+        private void YearPlusButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            selectedDateTime =
+                selectedDateTime.AddYears(1);
+
+            UpdateDateTimeEditor();
+        }
+        private void HourMinusButton_Click(
+    object sender,
+    RoutedEventArgs e)
+        {
+            selectedDateTime =
+                selectedDateTime.AddHours(-1);
+
+            UpdateDateTimeEditor();
+        }
+
+        private void HourPlusButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            selectedDateTime =
+                selectedDateTime.AddHours(1);
+
+            UpdateDateTimeEditor();
+        }
+
+        private void MinuteMinusButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            selectedDateTime =
+                selectedDateTime.AddMinutes(-1);
+
+            UpdateDateTimeEditor();
+        }
+
+        private void MinutePlusButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            selectedDateTime =
+                selectedDateTime.AddMinutes(1);
+
+            UpdateDateTimeEditor();
+        }
+        private void UpdateDateTimeEditor()
+        {
+            DayValueText.Text =
+                selectedDateTime.Day.ToString("00");
+
+            MonthValueText.Text =
+                monthNames[selectedDateTime.Month - 1];
+
+            YearValueText.Text =
+                selectedDateTime.Year.ToString();
+
+            HourValueText.Text =
+                selectedDateTime.Hour.ToString("00");
+
+            MinuteValueText.Text =
+                selectedDateTime.Minute.ToString("00");
+
+            SelectedDateText.Text =
+                $"{selectedDateTime.Day} " +
+                $"{monthNames[selectedDateTime.Month - 1].ToLower()} " +
+                $"{selectedDateTime.Year}";
+
+            SelectedTimeText.Text =
+                selectedDateTime.ToString("HH:mm");
+        }
+
+        private void LoadSystemControls()
+        {
+            systemControlsLoading = true;
+
+            try
+            {
+                int brightness =
+                    BrightnessService.GetBrightness();
+
+                if (brightness >= 0)
+                {
+                    BrightnessSlider.IsEnabled = true;
+                    BrightnessSlider.Value = brightness;
+
+                    BrightnessValueText.Text =
+                        $"{brightness}%";
+
+                    BrightnessErrorText.Visibility =
+                        Visibility.Collapsed;
+                }
+                else
+                {
+                    BrightnessSlider.IsEnabled = false;
+
+                    BrightnessValueText.Text =
+                        "Недоступно";
+
+                    BrightnessErrorText.Visibility =
+                        Visibility.Visible;
+                }
+
+                int volume =
+                    AudioService.GetVolume();
+
+                if (volume >= 0)
+                {
+                    VolumeSlider.IsEnabled = true;
+                    VolumeSlider.Value = volume;
+
+                    VolumeValueText.Text =
+                        $"{volume}%";
+                }
+                else
+                {
+                    VolumeSlider.IsEnabled = false;
+
+                    VolumeValueText.Text =
+                        "Недоступно";
+                }
+
+                bool muted =
+                    AudioService.IsMuted();
+
+                MuteToggle.IsChecked = muted;
+
+                MuteStatusText.Text =
+                    muted
+                        ? "Звук выключен"
+                        : "Звук включён";
+            }
+            finally
+            {
+                systemControlsLoading = false;
+            }
+        }
+
+        private async void BrightnessSlider_ValueChanged(
+            object sender,
+            RoutedPropertyChangedEventArgs<double> e)
+        {
+            int brightness =
+                (int)Math.Round(e.NewValue);
+
+            BrightnessValueText.Text =
+                $"{brightness}%";
+
+            if (systemControlsLoading)
+            {
+                return;
+            }
+
+            brightnessCancellationTokenSource?.Cancel();
+            brightnessCancellationTokenSource?.Dispose();
+
+            brightnessCancellationTokenSource =
+                new CancellationTokenSource();
+
+            CancellationToken token =
+                brightnessCancellationTokenSource.Token;
+
+            try
+            {
+                // Небольшая задержка, чтобы не отправлять WMI-команду
+                // на каждый пиксель движения ползунка.
+                await Task.Delay(100, token);
+
+                bool result = await Task.Run(
+                    () => BrightnessService.SetBrightness(
+                        brightness),
+                    token);
+
+                if (!result)
+                {
+                    BrightnessErrorText.Visibility =
+                        Visibility.Visible;
+
+                    BrightnessErrorText.Text =
+                        "Не удалось изменить яркость";
+                }
+                else
+                {
+                    BrightnessErrorText.Visibility =
+                        Visibility.Collapsed;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Пользователь продолжил двигать ползунок.
+            }
+        }
+
+        private void VolumeSlider_ValueChanged(
+            object sender,
+            RoutedPropertyChangedEventArgs<double> e)
+        {
+            int volume =
+                (int)Math.Round(e.NewValue);
+
+            VolumeValueText.Text =
+                $"{volume}%";
+
+            if (systemControlsLoading)
+            {
+                return;
+            }
+
+            AudioService.SetVolume(volume);
+
+            if (volume > 0 &&
+                MuteToggle.IsChecked == true)
+            {
+                systemControlsLoading = true;
+
+                MuteToggle.IsChecked = false;
+                MuteStatusText.Text = "Звук включён";
+
+                AudioService.SetMuted(false);
+
+                systemControlsLoading = false;
+            }
+        }
+
+        private void MuteToggle_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            if (systemControlsLoading)
+            {
+                return;
+            }
+
+            bool muted =
+                MuteToggle.IsChecked == true;
+
+            if (AudioService.SetMuted(muted))
+            {
+                MuteStatusText.Text =
+                    muted
+                        ? "Звук выключен"
+                        : "Звук включён";
+            }
+            else
+            {
+                systemControlsLoading = true;
+
+                MuteToggle.IsChecked = !muted;
+
+                systemControlsLoading = false;
+
+                MessageBox.Show(
+                    "Не удалось изменить состояние звука.",
+                    "CarShell",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
         private void UpdateDateTimeText()
         {
-            DateTimeStatusText.Text =
-                $"{DateTime.Now:dd.MM.yyyy, HH:mm}";
+            DateTime now = DateTime.Now;
+
+            CurrentTimeText.Text =
+                now.ToString("HH:mm");
+
+            CurrentDateText.Text =
+                now.ToString(
+                    "d MMMM yyyy 'г.'",
+                    new System.Globalization.CultureInfo("ru-RU"));
+
+            string dayOfWeek =
+                now.ToString(
+                    "dddd",
+                    new System.Globalization.CultureInfo("ru-RU"));
+
+            CurrentDayOfWeekText.Text =
+                char.ToUpper(dayOfWeek[0]) +
+                dayOfWeek.Substring(1);
         }
 
-        private void HideAllPanels()
+        private void SynchronizeTimeButton_Click(
+            object sender,
+            RoutedEventArgs e)
         {
-            NetworkPanel.Visibility =
-                Visibility.Collapsed;
+            try
+            {
+                SystemDateTimeService.SynchronizeTime();
 
-            SystemPanel.Visibility =
-                Visibility.Collapsed;
+                DateTimeResultText.Foreground =
+                    new SolidColorBrush(
+                        Color.FromRgb(57, 185, 128));
 
-            UpdatePanel.Visibility =
-                Visibility.Collapsed;
+                DateTimeResultText.Text =
+                    "Команда синхронизации отправлена.";
+            }
+            catch (Exception ex)
+            {
+                DateTimeResultText.Foreground =
+                    new SolidColorBrush(
+                        Color.FromRgb(229, 115, 115));
 
-            CarPanel.Visibility =
-                Visibility.Collapsed;
-
-            AboutPanel.Visibility =
-                Visibility.Collapsed;
-
-            ResetNavigationButtons();
+                DateTimeResultText.Text =
+                    $"Ошибка синхронизации: {ex.Message}";
+            }
         }
 
+        private void ApplyDateTimeButton_Click(
+    object sender,
+    RoutedEventArgs e)
+        {
+            bool result =
+                SystemDateTimeService.SetDateTime(
+                    selectedDateTime);
+
+            if (result)
+            {
+                DateTimeResultText.Foreground =
+                    new SolidColorBrush(
+                        Color.FromRgb(57, 185, 128));
+
+                DateTimeResultText.Text =
+                    "Дата и время успешно изменены.";
+
+                UpdateDateTimeText();
+            }
+            else
+            {
+                DateTimeResultText.Foreground =
+                    new SolidColorBrush(
+                        Color.FromRgb(229, 115, 115));
+
+                DateTimeResultText.Text =
+                    "Не удалось изменить системное время. Недостаточно прав.";
+            }
+        }
+            
+        private DateTime selectedDateTime = DateTime.Now;
+
+        private readonly string[] monthNames =
+        {
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь"
+};
         private void ResetNavigationButtons()
         {
             NetworkNavigationButton.Background =
@@ -140,13 +558,23 @@ namespace CarShell.Pages
             object sender,
             RoutedEventArgs e)
         {
+            LoadSystemControls();
             UpdateDateTimeText();
 
             ShowPanel(
                 SystemPanel,
                 SystemNavigationButton);
         }
+        private void HideAllPanels()
+        {
+            NetworkPanel.Visibility = Visibility.Collapsed;
+            SystemPanel.Visibility = Visibility.Collapsed;
+            UpdatePanel.Visibility = Visibility.Collapsed;
+            CarPanel.Visibility = Visibility.Collapsed;
+            AboutPanel.Visibility = Visibility.Collapsed;
 
+            ResetNavigationButtons();
+        }
         private void UpdateNavigationButton_Click(
             object sender,
             RoutedEventArgs e)
@@ -155,7 +583,6 @@ namespace CarShell.Pages
                 UpdatePanel,
                 UpdateNavigationButton);
 
-            // Загружаем страницу обновлений только при первом открытии.
             if (UpdateSettingsFrame.Content == null)
             {
                 UpdateSettingsFrame.Navigate(
@@ -185,9 +612,6 @@ namespace CarShell.Pages
             object sender,
             RoutedEventArgs e)
         {
-            // Пока меняем только текст.
-            // Реальное управление адаптером добавим через RadioService.
-
             WifiStatusText.Text =
                 WifiToggle.IsChecked == true
                     ? "Wi-Fi включён"
@@ -198,15 +622,15 @@ namespace CarShell.Pages
             object sender,
             RoutedEventArgs e)
         {
-            // Пока меняем только текст.
-            // Реальное управление Bluetooth добавим через RadioService.
-
             BluetoothStatusText.Text =
                 BluetoothToggle.IsChecked == true
                     ? "Bluetooth включён"
                     : "Bluetooth выключен";
         }
-        private void OpenExplorer_Click(object sender, RoutedEventArgs e)
+
+        private void OpenExplorer_Click(
+            object sender,
+            RoutedEventArgs e)
         {
             try
             {
@@ -246,52 +670,6 @@ namespace CarShell.Pages
                 "CarShell",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
-        }
-
-        private void BrightnessButton_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            OpenWindowsSettings(
-                "ms-settings:display");
-        }
-
-        private void VolumeButton_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            OpenWindowsSettings(
-                "ms-settings:sound");
-        }
-
-        private void DateTimeButton_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            OpenWindowsSettings(
-                "ms-settings:dateandtime");
-        }
-
-        private static void OpenWindowsSettings(
-            string address)
-        {
-            try
-            {
-                Process.Start(
-                    new ProcessStartInfo
-                    {
-                        FileName = address,
-                        UseShellExecute = true
-                    });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    $"Не удалось открыть настройки Windows.\n\n{ex.Message}",
-                    "CarShell",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
         }
     }
 }
