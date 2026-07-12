@@ -66,7 +66,7 @@
 
 		<PropertyGroup>
 			<UpdaterProjectPath>$(MSBuildProjectDirectory)\..\Updater\Updater.csproj</UpdaterProjectPath>
-			<UpdaterOutputDirectory>$(MSBuildProjectDirectory)\..\Updater\bin\$(Configuration)\net8.0-windows\</UpdaterOutputDirectory>
+			<UpdaterOutputDirectory>$(MSBuildProjectDirectory)\..\Updater\bin\$(Configuration)\net8.0-windows\win-x64\</UpdaterOutputDirectory>
 		</PropertyGroup>
 
 		<Message Text="Проект Updater: $(UpdaterProjectPath)"
@@ -80,11 +80,11 @@
 
 		<MSBuild Projects="$(UpdaterProjectPath)"
 				 Targets="Restore"
-				 Properties="Configuration=$(Configuration)" />
+				 Properties="Configuration=$(Configuration);RuntimeIdentifier=win-x64" />
 
 		<MSBuild Projects="$(UpdaterProjectPath)"
 				 Targets="Build"
-				 Properties="Configuration=$(Configuration)" />
+				 Properties="Configuration=$(Configuration);RuntimeIdentifier=win-x64" />
 
 		<ItemGroup>
 			<UpdaterFiles Include="$(UpdaterOutputDirectory)Updater.exe"
