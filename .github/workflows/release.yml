@@ -1,105 +1,323 @@
 name: Build and Release Version
 
 on:
-  push:
-    branches:
-      - master
-      - main
+push:
+branches:
+- master
+- main
 
 permissions:
-  contents: write
+contents: write
 
 jobs:
-  build-release:
-    runs-on: windows-latest
+build-release:
+runs-on: windows-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+```
+steps:
+  # ------------------------------------------------------------
+  # Получение исходников
+  # ------------------------------------------------------------
+  - name: Checkout
+    uses: actions/checkout@v4
+    with:
+      fetch-depth: 0
 
-      - name: Setup .NET 8
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
+  # ------------------------------------------------------------
+  # Установка .NET 8
+  # ------------------------------------------------------------
+  - name: Setup .NET 8
+    uses: actions/setup-dotnet@v4
+    with:
+      dotnet-version: 8.0.x
 
-      - name: Get version from VersionInfo.cs
-        id: version
-        shell: pwsh
-        run: |
-          $file = Get-ChildItem -Recurse -Filter VersionInfo.cs | Select-Object -First 1
-          if (-not $file) {
-            throw "VersionInfo.cs not found"
-          }
+  # ------------------------------------------------------------
+  # Получение версии CarShell
+  # ------------------------------------------------------------
+  - name: Get version from VersionInfo.cs
+    id: version
+    shell: pwsh
+    run: |
+      $file = Get-ChildItem `
+        -Path "CarShell" `
+        -Recurse `
+        -Filter "VersionInfo.cs" |
+        Select-Object -First 1
 
-          $content = Get-Content $file.FullName -Raw
+      if (-not $file) {
+        throw "CarShell VersionInfo.cs not found"
+      }
 
-          if ($content -match 'Version\s*=\s*"([^"]+)"') {
-            $version = $matches[1]
-          } else {
-            throw "Version not found in VersionInfo.cs"
-          }
+      Write-Host "Version file: $($file.FullName)"
 
-          $tag = "v$version"
+      $content = Get-Content $file.FullName -Raw
 
-          echo "version=$version" >> $env:GITHUB_OUTPUT
-          echo "tag=$tag" >> $env:GITHUB_OUTPUT
+      if ($content -match 'Version\s*=\s*"([^"]+)"') {
+        $version = $matches[1]
+      }
+      else {
+        throw "Version not found in VersionInfo.cs"
+      }
 
-          Write-Host "Version: $version"
-          Write-Host "Tag: $tag"
+      $version = $version.Trim().TrimStart("v", "V")
 
-      - name: Create git tag if not exists
-        shell: pwsh
-        run: |
-          $tag = "${{ steps.version.outputs.tag }}"
+      if ([string]::IsNullOrWhiteSpace($version)) {
+        throw "Version is empty"
+      }
 
-          git fetch --tags
+      $tag = "v$version"
 
-          $exists = git tag -l $tag
+      "version=$version" >> $env:GITHUB_OUTPUT
+      "tag=$tag" >> $env:GITHUB_OUTPUT
 
-          if ($exists) {
-            Write-Host "Tag $tag already exists"
-          } else {
-            git config user.name "github-actions"
-            git config user.email "github-actions@github.com"
+      Write-Host "Version: $version"
+      Write-Host "Tag: $tag"
 
-            git tag $tag
-            git push origin $tag
+  # ------------------------------------------------------------
+  # Создание Git-тега
+  # ------------------------------------------------------------
+  - name: Create git tag if not exists
+    shell: pwsh
+    run: |
+      $tag = "${{ steps.version.outputs.tag }}"
 
-            Write-Host "Created tag $tag"
-          }
+      git fetch --tags
 
-      - name: Restore
-        run: dotnet restore CarShell.sln
+      $existingTag = git tag -l $tag
 
-      - name: Publish CarShell
-        run: >
-          dotnet publish CarShell/CarShell.csproj
-          -c Release
-          -r win-x64
-          --self-contained true
-          -o publish
-          /p:PublishSingleFile=true
-          /p:IncludeNativeLibrariesForSelfExtract=true
-          /p:EnableCompressionInSingleFile=true
-          /p:DebugType=None
-          /p:DebugSymbols=false
+      if ($existingTag) {
+        Write-Host "Tag $tag already exists"
+      }
+      else {
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
 
-      - name: Create ZIP
-        shell: pwsh
-        run: Compress-Archive -Path publish\* -DestinationPath CarShell-win-x64.zip -Force
+        git tag $tag
+        git push origin $tag
 
-      - name: Create or update Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          name: CarShell ${{ steps.version.outputs.version }}
-          body: |
-            Автоматическая сборка версии CarShell ${{ steps.version.outputs.version }}.
+        Write-Host "Created tag $tag"
+      }
 
-            Файл для обновления:
-            CarShell-win-x64.zip
-          files: CarShell-win-x64.zip
-          make_latest: true
-          overwrite_files: true
+  # ------------------------------------------------------------
+  # Очистка старых папок сборки
+  # ------------------------------------------------------------
+  - name: Clean output directories
+    shell: pwsh
+    run: |
+      Remove-Item "publish" `
+        -Recurse `
+        -Force `
+        -ErrorAction SilentlyContinue
+
+      Remove-Item "updater-publish" `
+        -Recurse `
+        -Force `
+        -ErrorAction SilentlyContinue
+
+      Remove-Item "CarShell-win-x64.zip" `
+        -Force `
+        -ErrorAction SilentlyContinue
+
+  # ------------------------------------------------------------
+  # Восстановление NuGet-пакетов
+  # ------------------------------------------------------------
+  - name: Restore solution
+    shell: pwsh
+    run: |
+      dotnet restore "CarShell.sln"
+
+  # ------------------------------------------------------------
+  # Публикация CarShell
+  # ------------------------------------------------------------
+  - name: Publish CarShell
+    shell: pwsh
+    run: |
+      dotnet publish "CarShell/CarShell.csproj" `
+        -c Release `
+        -r win-x64 `
+        --self-contained true `
+        --no-restore `
+        -o "publish" `
+        /p:PublishSingleFile=true `
+        /p:IncludeNativeLibrariesForSelfExtract=true `
+        /p:EnableCompressionInSingleFile=true `
+        /p:DebugType=None `
+        /p:DebugSymbols=false
+
+  # ------------------------------------------------------------
+  # Публикация Updater
+  # ------------------------------------------------------------
+  - name: Publish Updater
+    shell: pwsh
+    run: |
+      dotnet publish "Updater/Updater.csproj" `
+        -c Release `
+        -r win-x64 `
+        --self-contained true `
+        --no-restore `
+        -o "updater-publish" `
+        /p:PublishSingleFile=true `
+        /p:IncludeNativeLibrariesForSelfExtract=true `
+        /p:EnableCompressionInSingleFile=true `
+        /p:DebugType=None `
+        /p:DebugSymbols=false
+
+  # ------------------------------------------------------------
+  # Добавление Updater в общий релиз
+  # ------------------------------------------------------------
+  - name: Add Updater to CarShell publish
+    shell: pwsh
+    run: |
+      $updaterExe = Join-Path `
+        "updater-publish" `
+        "Updater.exe"
+
+      if (-not (Test-Path $updaterExe)) {
+        Write-Host "Updater publish contents:"
+        Get-ChildItem "updater-publish" -Recurse
+
+        throw "Updater.exe was not created"
+      }
+
+      Copy-Item `
+        -Path "updater-publish/Updater.exe" `
+        -Destination "publish/Updater.exe" `
+        -Force
+
+      Write-Host "Updater.exe added to release"
+
+  # ------------------------------------------------------------
+  # Удаление карт и лишних файлов
+  # ------------------------------------------------------------
+  - name: Remove Maps and unnecessary files
+    shell: pwsh
+    run: |
+      $excludedDirectories = @(
+        "publish/Maps",
+        "publish/maps",
+        "publish/bin",
+        "publish/obj",
+        "publish/.git"
+      )
+
+      foreach ($directory in $excludedDirectories) {
+        if (Test-Path $directory) {
+          Write-Host "Removing $directory"
+
+          Remove-Item `
+            -Path $directory `
+            -Recurse `
+            -Force
+        }
+      }
+
+      Get-ChildItem `
+        -Path "publish" `
+        -Recurse `
+        -Filter "*.pdb" |
+        Remove-Item `
+          -Force `
+          -ErrorAction SilentlyContinue
+
+      Get-ChildItem `
+        -Path "publish" `
+        -Recurse `
+        -Filter "*.pmtiles" |
+        Remove-Item `
+          -Force `
+          -ErrorAction SilentlyContinue
+
+  # ------------------------------------------------------------
+  # Проверка содержимого релиза
+  # ------------------------------------------------------------
+  - name: Verify release files
+    shell: pwsh
+    run: |
+      $carShellExe = "publish/CarShell.exe"
+      $updaterExe = "publish/Updater.exe"
+
+      if (-not (Test-Path $carShellExe)) {
+        throw "CarShell.exe not found in publish directory"
+      }
+
+      if (-not (Test-Path $updaterExe)) {
+        throw "Updater.exe not found in publish directory"
+      }
+
+      $mapsDirectory = "publish/Maps"
+
+      if (Test-Path $mapsDirectory) {
+        throw "Maps directory is still present in publish directory"
+      }
+
+      $mapFiles = Get-ChildItem `
+        -Path "publish" `
+        -Recurse `
+        -Filter "*.pmtiles" `
+        -ErrorAction SilentlyContinue
+
+      if ($mapFiles) {
+        Write-Host "Found unexpected map files:"
+        $mapFiles | ForEach-Object {
+          Write-Host $_.FullName
+        }
+
+        throw "PMTiles files are still present"
+      }
+
+      Write-Host ""
+      Write-Host "Release contents:"
+      Get-ChildItem "publish" -Recurse |
+        Select-Object FullName, Length
+
+  # ------------------------------------------------------------
+  # Создание общего архива
+  # ------------------------------------------------------------
+  - name: Create ZIP
+    shell: pwsh
+    run: |
+      Compress-Archive `
+        -Path "publish/*" `
+        -DestinationPath "CarShell-win-x64.zip" `
+        -CompressionLevel Optimal `
+        -Force
+
+      if (-not (Test-Path "CarShell-win-x64.zip")) {
+        throw "ZIP archive was not created"
+      }
+
+      $zipFile = Get-Item "CarShell-win-x64.zip"
+      $zipSizeMb = [math]::Round(
+        $zipFile.Length / 1MB,
+        2
+      )
+
+      Write-Host "ZIP created successfully"
+      Write-Host "ZIP size: $zipSizeMb MB"
+
+  # ------------------------------------------------------------
+  # Создание или обновление GitHub Release
+  # ------------------------------------------------------------
+  - name: Create or update Release
+    uses: softprops/action-gh-release@v2
+    with:
+      tag_name: ${{ steps.version.outputs.tag }}
+      name: CarShell ${{ steps.version.outputs.version }}
+      body: |
+        Автоматическая сборка CarShell ${{ steps.version.outputs.version }}.
+
+        В архив входят:
+        - CarShell
+        - Updater
+        - необходимые системные библиотеки
+
+        Не входят:
+        - офлайн-карты
+        - файлы PMTiles
+        - отладочные PDB-файлы
+
+        Локальная папка Maps при обновлении сохраняется.
+      files: CarShell-win-x64.zip
+      make_latest: true
+      overwrite_files: true
+```
