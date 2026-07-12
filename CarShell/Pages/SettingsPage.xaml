@@ -4,32 +4,8 @@
              Background="#05080D">
 
     <UserControl.Resources>
-        <Style TargetType="ScrollViewer">
 
-            <Setter Property="VerticalScrollBarVisibility"
-            Value="Auto"/>
-
-            <Setter Property="HorizontalScrollBarVisibility"
-            Value="Disabled"/>
-
-            <Setter Property="PanningMode"
-            Value="VerticalOnly"/>
-
-            <Setter Property="PanningDeceleration"
-            Value="0.002"/>
-
-            <Setter Property="PanningRatio"
-            Value="1.2"/>
-
-            <Setter Property="IsManipulationEnabled"
-            Value="True"/>
-
-            <Setter Property="CanContentScroll"
-            Value="False"/>
-
-        </Style>
-
-        <!-- Левая кнопка раздела -->
+        <!-- ЛЕВАЯ КНОПКА РАЗДЕЛА -->
         <Style x:Key="NavigationButtonStyle"
                TargetType="Button">
 
@@ -64,6 +40,7 @@
                     Value="Hand"/>
 
             <Setter Property="Template">
+
                 <Setter.Value>
 
                     <ControlTemplate TargetType="Button">
@@ -107,11 +84,12 @@
                     </ControlTemplate>
 
                 </Setter.Value>
+
             </Setter>
 
         </Style>
 
-        <!-- Карточка настройки -->
+        <!-- КАРТОЧКА НАСТРОЙКИ -->
         <Style x:Key="SettingsCardStyle"
                TargetType="Border">
 
@@ -135,7 +113,7 @@
 
         </Style>
 
-        <!-- Обычная кнопка -->
+        <!-- ОБЫЧНАЯ КНОПКА -->
         <Style x:Key="ActionButtonStyle"
                TargetType="Button">
 
@@ -167,6 +145,7 @@
                     Value="Hand"/>
 
             <Setter Property="Template">
+
                 <Setter.Value>
 
                     <ControlTemplate TargetType="Button">
@@ -216,11 +195,86 @@
                     </ControlTemplate>
 
                 </Setter.Value>
+
             </Setter>
 
         </Style>
 
-        <!-- Переключатель -->
+        <!-- КНОПКА ПЛЮС / МИНУС -->
+        <Style x:Key="ValueButtonStyle"
+               TargetType="Button">
+
+            <Setter Property="Width"
+                    Value="66"/>
+
+            <Setter Property="Height"
+                    Value="56"/>
+
+            <Setter Property="Foreground"
+                    Value="White"/>
+
+            <Setter Property="Background"
+                    Value="#1A2A3B"/>
+
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+
+            <Setter Property="FontSize"
+                    Value="27"/>
+
+            <Setter Property="FontWeight"
+                    Value="SemiBold"/>
+
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="Button">
+
+                        <Border x:Name="ValueButtonBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="13">
+
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+
+                                <Setter TargetName="ValueButtonBorder"
+                                        Property="Background"
+                                        Value="#243D55"/>
+
+                            </Trigger>
+
+                            <Trigger Property="IsPressed"
+                                     Value="True">
+
+                                <Setter TargetName="ValueButtonBorder"
+                                        Property="Background"
+                                        Value="#126FA9"/>
+
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+
+            </Setter>
+
+        </Style>
+
+        <!-- ПЕРЕКЛЮЧАТЕЛЬ -->
         <Style x:Key="ToggleSwitchStyle"
                TargetType="CheckBox">
 
@@ -234,6 +288,7 @@
                     Value="Hand"/>
 
             <Setter Property="Template">
+
                 <Setter.Value>
 
                     <ControlTemplate TargetType="CheckBox">
@@ -287,81 +342,34 @@
                     </ControlTemplate>
 
                 </Setter.Value>
+
             </Setter>
 
         </Style>
-        <!-- Подпись поля -->
-        <Style x:Key="FieldLabelStyle"
-       TargetType="TextBlock">
 
-            <Setter Property="Foreground"
-            Value="#8092A8"/>
+        <!-- СЕНСОРНАЯ ПРОКРУТКА -->
+        <Style TargetType="ScrollViewer">
 
-            <Setter Property="FontSize"
-            Value="14"/>
+            <Setter Property="VerticalScrollBarVisibility"
+                    Value="Auto"/>
 
-            <Setter Property="Margin"
-            Value="0,0,0,8"/>
+            <Setter Property="HorizontalScrollBarVisibility"
+                    Value="Disabled"/>
 
-        </Style>
+            <Setter Property="PanningMode"
+                    Value="VerticalOnly"/>
 
-        <!-- Тёмный ComboBox -->
-        <Style x:Key="DarkComboBoxStyle"
-       TargetType="ComboBox">
+            <Setter Property="PanningDeceleration"
+                    Value="0.002"/>
 
-            <Setter Property="Height"
-            Value="54"/>
+            <Setter Property="PanningRatio"
+                    Value="1.2"/>
 
-            <Setter Property="Foreground"
-            Value="White"/>
+            <Setter Property="IsManipulationEnabled"
+                    Value="True"/>
 
-            <Setter Property="Background"
-            Value="#111C29"/>
-
-            <Setter Property="BorderBrush"
-            Value="#26394D"/>
-
-            <Setter Property="BorderThickness"
-            Value="1"/>
-
-            <Setter Property="FontSize"
-            Value="18"/>
-
-            <Setter Property="Padding"
-            Value="14,0"/>
-
-            <Setter Property="VerticalContentAlignment"
-            Value="Center"/>
-
-        </Style>
-
-        <!-- Тёмное поле даты -->
-        <Style x:Key="DarkDateFieldStyle"
-       TargetType="TextBox">
-
-            <Setter Property="Height"
-            Value="54"/>
-
-            <Setter Property="Foreground"
-            Value="White"/>
-
-            <Setter Property="Background"
-            Value="#111C29"/>
-
-            <Setter Property="BorderBrush"
-            Value="#26394D"/>
-
-            <Setter Property="BorderThickness"
-            Value="1"/>
-
-            <Setter Property="FontSize"
-            Value="18"/>
-
-            <Setter Property="Padding"
-            Value="16,0"/>
-
-            <Setter Property="VerticalContentAlignment"
-            Value="Center"/>
+            <Setter Property="CanContentScroll"
+                    Value="False"/>
 
         </Style>
 
@@ -374,7 +382,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Заголовок -->
+        <!-- ВЕРХНИЙ ЗАГОЛОВОК -->
         <Grid Grid.Row="0">
 
             <Grid.ColumnDefinitions>
@@ -419,7 +427,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Левая панель -->
+            <!-- ЛЕВАЯ ПАНЕЛЬ -->
             <Border Grid.Column="0"
                     Background="#0C1219"
                     BorderBrush="#172431"
@@ -520,20 +528,24 @@
                             </StackPanel>
 
                         </Button>
+
                         <Button x:Name="Explorer"
-        Style="{StaticResource NavigationButtonStyle}"
-        Click="OpenExplorer_Click">
+                                Style="{StaticResource NavigationButtonStyle}"
+                                Click="OpenExplorer_Click">
 
                             <StackPanel Orientation="Horizontal">
 
+                                <TextBlock Text="📁"
+                                           FontSize="23"
+                                           Width="45"/>
 
-                                <TextBlock Text="Открыть проводник"
-                   VerticalAlignment="Center"/>
+                                <TextBlock Text="Проводник"
+                                           VerticalAlignment="Center"/>
 
                             </StackPanel>
 
                         </Button>
-                       
+
                     </StackPanel>
 
                     <Border Grid.Row="1"
@@ -563,15 +575,16 @@
 
             </Border>
 
-            <!-- Правая область -->
+            <!-- ПРАВАЯ ОБЛАСТЬ -->
             <Grid Grid.Column="2">
 
+                <!-- ================================================= -->
                 <!-- СЕТЬ -->
-                <ScrollViewer x:Name="NetworkPanel"
-                              VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Disabled">
+                <!-- ================================================= -->
 
-                    <StackPanel>
+                <ScrollViewer x:Name="NetworkPanel">
+
+                    <StackPanel Margin="0,0,0,100">
 
                         <TextBlock Text="Сеть"
                                    FontSize="32"
@@ -583,17 +596,33 @@
                                    Foreground="#778A9E"
                                    Margin="0,5,0,24"/>
 
-                        <!-- Wi-Fi -->
+                        <!-- WI-FI -->
                         <Border Style="{StaticResource SettingsCardStyle}">
 
                             <Grid>
 
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="18"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel>
+                                <Border Width="58"
+                                        Height="58"
+                                        Background="#102E49"
+                                        CornerRadius="15">
+
+                                    <TextBlock Text="⌁"
+                                               Foreground="#2A9DFF"
+                                               FontSize="38"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+
+                                </Border>
+
+                                <StackPanel Grid.Column="2"
+                                            VerticalAlignment="Center">
 
                                     <TextBlock Text="Wi-Fi"
                                                FontSize="24"
@@ -604,7 +633,7 @@
                                                Text="Получение состояния адаптера..."
                                                FontSize="16"
                                                Foreground="#8295A8"
-                                               Margin="0,8,0,0"/>
+                                               Margin="0,7,0,0"/>
 
                                     <TextBlock x:Name="ConnectedWifiText"
                                                Text=""
@@ -615,25 +644,42 @@
                                 </StackPanel>
 
                                 <CheckBox x:Name="WifiToggle"
-                                          Grid.Column="1"
+                                          Grid.Column="3"
                                           Style="{StaticResource ToggleSwitchStyle}"
-                                          VerticalAlignment="Top"
+                                          VerticalAlignment="Center"
                                           Click="WifiToggle_Click"/>
 
                             </Grid>
 
                         </Border>
 
+                        <!-- ДОСТУПНЫЕ СЕТИ -->
                         <Border Style="{StaticResource SettingsCardStyle}">
 
                             <Grid>
 
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="18"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel>
+                                <Border Width="58"
+                                        Height="58"
+                                        Background="#102E49"
+                                        CornerRadius="15">
+
+                                    <TextBlock Text="≋"
+                                               Foreground="#2A9DFF"
+                                               FontSize="34"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+
+                                </Border>
+
+                                <StackPanel Grid.Column="2"
+                                            VerticalAlignment="Center">
 
                                     <TextBlock Text="Доступные Wi-Fi сети"
                                                FontSize="21"
@@ -647,7 +693,7 @@
 
                                 </StackPanel>
 
-                                <Button Grid.Column="1"
+                                <Button Grid.Column="3"
                                         Style="{StaticResource ActionButtonStyle}"
                                         Content="Открыть"
                                         Click="OpenWifiButton_Click"/>
@@ -656,17 +702,33 @@
 
                         </Border>
 
-                        <!-- Bluetooth -->
+                        <!-- BLUETOOTH -->
                         <Border Style="{StaticResource SettingsCardStyle}">
 
                             <Grid>
 
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="18"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel>
+                                <Border Width="58"
+                                        Height="58"
+                                        Background="#102E49"
+                                        CornerRadius="15">
+
+                                    <TextBlock Text="ᛒ"
+                                               Foreground="#2A9DFF"
+                                               FontSize="33"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+
+                                </Border>
+
+                                <StackPanel Grid.Column="2"
+                                            VerticalAlignment="Center">
 
                                     <TextBlock Text="Bluetooth"
                                                FontSize="24"
@@ -682,39 +744,56 @@
                                 </StackPanel>
 
                                 <CheckBox x:Name="BluetoothToggle"
-                                          Grid.Column="1"
+                                          Grid.Column="3"
                                           Style="{StaticResource ToggleSwitchStyle}"
-                                          VerticalAlignment="Top"
+                                          VerticalAlignment="Center"
                                           Click="BluetoothToggle_Click"/>
 
                             </Grid>
 
                         </Border>
 
+                        <!-- BLUETOOTH УСТРОЙСТВА -->
                         <Border Style="{StaticResource SettingsCardStyle}">
 
                             <Grid>
 
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="18"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel>
+                                <Border Width="58"
+                                        Height="58"
+                                        Background="#102E49"
+                                        CornerRadius="15">
+
+                                    <TextBlock Text="◉"
+                                               Foreground="#2A9DFF"
+                                               FontSize="30"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+
+                                </Border>
+
+                                <StackPanel Grid.Column="2"
+                                            VerticalAlignment="Center">
 
                                     <TextBlock Text="Bluetooth-устройства"
                                                FontSize="21"
                                                FontWeight="SemiBold"
                                                Foreground="White"/>
 
-                                    <TextBlock Text="Сопряжение телефонов, адаптеров и аудиоустройств"
+                                    <TextBlock Text="Телефоны, адаптеры и аудиоустройства"
                                                FontSize="15"
                                                Foreground="#8295A8"
                                                Margin="0,7,0,0"/>
 
                                 </StackPanel>
 
-                                <Button Grid.Column="1"
+                                <Button Grid.Column="3"
                                         Style="{StaticResource ActionButtonStyle}"
                                         Content="Открыть"
                                         Click="OpenBluetoothButton_Click"/>
@@ -727,13 +806,14 @@
 
                 </ScrollViewer>
 
+                <!-- ================================================= -->
                 <!-- СИСТЕМА -->
-                <ScrollViewer x:Name="SystemPanel"
-                              Visibility="Collapsed"
-                              VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Disabled">
+                <!-- ================================================= -->
 
-                    <StackPanel>
+                <ScrollViewer x:Name="SystemPanel"
+                              Visibility="Collapsed">
+
+                    <StackPanel Margin="0,0,0,100">
 
                         <TextBlock Text="Система"
                                    FontSize="32"
@@ -760,42 +840,42 @@
                                     <StackPanel>
 
                                         <TextBlock Text="Яркость экрана"
-                           FontSize="21"
-                           FontWeight="SemiBold"
-                           Foreground="White"/>
+                                                   FontSize="21"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="White"/>
 
                                         <TextBlock Text="Управление подсветкой дисплея Surface"
-                           Foreground="#8295A8"
-                           FontSize="15"
-                           Margin="0,6,0,0"/>
+                                                   Foreground="#8295A8"
+                                                   FontSize="15"
+                                                   Margin="0,6,0,0"/>
 
                                     </StackPanel>
 
                                     <TextBlock x:Name="BrightnessValueText"
-                       Grid.Column="1"
-                       Text="—%"
-                       Foreground="#4CA9DD"
-                       FontSize="22"
-                       FontWeight="SemiBold"
-                       VerticalAlignment="Center"/>
+                                               Grid.Column="1"
+                                               Text="—%"
+                                               Foreground="#4CA9DD"
+                                               FontSize="22"
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center"/>
 
                                 </Grid>
 
                                 <Slider x:Name="BrightnessSlider"
-                Minimum="0"
-                Maximum="100"
-                SmallChange="1"
-                LargeChange="10"
-                ValueChanged="BrightnessSlider_ValueChanged"
-                Margin="0,22,0,0"
-                Height="42"/>
+                                        Minimum="0"
+                                        Maximum="100"
+                                        SmallChange="1"
+                                        LargeChange="10"
+                                        ValueChanged="BrightnessSlider_ValueChanged"
+                                        Margin="0,22,0,0"
+                                        Height="42"/>
 
                                 <TextBlock x:Name="BrightnessErrorText"
-                   Visibility="Collapsed"
-                   Text="Управление яркостью недоступно"
-                   Foreground="#E57373"
-                   FontSize="14"
-                   Margin="0,8,0,0"/>
+                                           Visibility="Collapsed"
+                                           Text="Управление яркостью недоступно"
+                                           Foreground="#E57373"
+                                           FontSize="14"
+                                           Margin="0,8,0,0"/>
 
                             </StackPanel>
 
@@ -816,35 +896,35 @@
                                     <StackPanel>
 
                                         <TextBlock Text="Громкость"
-                           FontSize="21"
-                           FontWeight="SemiBold"
-                           Foreground="White"/>
+                                                   FontSize="21"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="White"/>
 
                                         <TextBlock Text="Общая громкость аудиосистемы Windows"
-                           Foreground="#8295A8"
-                           FontSize="15"
-                           Margin="0,6,0,0"/>
+                                                   Foreground="#8295A8"
+                                                   FontSize="15"
+                                                   Margin="0,6,0,0"/>
 
                                     </StackPanel>
 
                                     <TextBlock x:Name="VolumeValueText"
-                       Grid.Column="1"
-                       Text="—%"
-                       Foreground="#4CA9DD"
-                       FontSize="22"
-                       FontWeight="SemiBold"
-                       VerticalAlignment="Center"/>
+                                               Grid.Column="1"
+                                               Text="—%"
+                                               Foreground="#4CA9DD"
+                                               FontSize="22"
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center"/>
 
                                 </Grid>
 
                                 <Slider x:Name="VolumeSlider"
-                Minimum="0"
-                Maximum="100"
-                SmallChange="1"
-                LargeChange="10"
-                ValueChanged="VolumeSlider_ValueChanged"
-                Margin="0,22,0,0"
-                Height="42"/>
+                                        Minimum="0"
+                                        Maximum="100"
+                                        SmallChange="1"
+                                        LargeChange="10"
+                                        ValueChanged="VolumeSlider_ValueChanged"
+                                        Margin="0,22,0,0"
+                                        Height="42"/>
 
                                 <Grid Margin="0,14,0,0">
 
@@ -856,36 +936,35 @@
                                     <StackPanel VerticalAlignment="Center">
 
                                         <TextBlock Text="Отключить звук"
-                           Foreground="White"
-                           FontSize="17"/>
+                                                   Foreground="White"
+                                                   FontSize="17"/>
 
                                         <TextBlock x:Name="MuteStatusText"
-                           Text="Звук включён"
-                           Foreground="#8295A8"
-                           FontSize="14"
-                           Margin="0,4,0,0"/>
+                                                   Text="Звук включён"
+                                                   Foreground="#8295A8"
+                                                   FontSize="14"
+                                                   Margin="0,4,0,0"/>
 
                                     </StackPanel>
 
                                     <CheckBox x:Name="MuteToggle"
-                      Grid.Column="1"
-                      Style="{StaticResource ToggleSwitchStyle}"
-                      VerticalAlignment="Center"
-                      Click="MuteToggle_Click"/>
+                                              Grid.Column="1"
+                                              Style="{StaticResource ToggleSwitchStyle}"
+                                              VerticalAlignment="Center"
+                                              Click="MuteToggle_Click"/>
 
                                 </Grid>
 
                             </StackPanel>
 
                         </Border>
-                        <!-- ДАТА И ВРЕМЯ -->
+
                         <!-- ДАТА И ВРЕМЯ -->
                         <Border Style="{StaticResource SettingsCardStyle}"
-        Padding="28">
+                                Padding="28">
 
                             <StackPanel>
 
-                                <!-- Верхняя часть -->
                                 <Grid>
 
                                     <Grid.ColumnDefinitions>
@@ -896,225 +975,200 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Border Width="62"
-                    Height="62"
-                    Background="#12395B"
-                    CornerRadius="16">
+                                            Height="62"
+                                            Background="#12395B"
+                                            CornerRadius="16">
 
                                         <TextBlock Text="◷"
-                           Foreground="#2A9DFF"
-                           FontSize="38"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
+                                                   Foreground="#2A9DFF"
+                                                   FontSize="38"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"/>
 
                                     </Border>
 
                                     <StackPanel Grid.Column="2"
-                        VerticalAlignment="Center">
+                                                VerticalAlignment="Center">
 
                                         <TextBlock Text="Дата и время"
-                           Foreground="White"
-                           FontSize="24"
-                           FontWeight="SemiBold"/>
+                                                   Foreground="White"
+                                                   FontSize="24"
+                                                   FontWeight="SemiBold"/>
 
                                         <TextBlock Text="Текущие системные дата и время"
-                           Foreground="#8295A8"
-                           FontSize="15"
-                           Margin="0,6,0,0"/>
+                                                   Foreground="#8295A8"
+                                                   FontSize="15"
+                                                   Margin="0,6,0,0"/>
 
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="3"
-                        HorizontalAlignment="Right">
+                                                HorizontalAlignment="Right">
 
                                         <TextBlock x:Name="CurrentTimeText"
-                           Text="17:07"
-                           Foreground="White"
-                           FontSize="34"
-                           FontWeight="SemiBold"
-                           HorizontalAlignment="Right"/>
+                                                   Text="17:07"
+                                                   Foreground="White"
+                                                   FontSize="34"
+                                                   FontWeight="SemiBold"
+                                                   HorizontalAlignment="Right"/>
 
                                         <TextBlock x:Name="CurrentDateText"
-                           Text="12 июля 2026 г."
-                           Foreground="#D7E0EA"
-                           FontSize="16"
-                           Margin="0,4,0,0"
-                           HorizontalAlignment="Right"/>
+                                                   Text="12 июля 2026 г."
+                                                   Foreground="#D7E0EA"
+                                                   FontSize="16"
+                                                   Margin="0,4,0,0"
+                                                   HorizontalAlignment="Right"/>
 
                                         <TextBlock x:Name="CurrentDayOfWeekText"
-                           Text="Воскресенье"
-                           Foreground="#8295A8"
-                           FontSize="14"
-                           Margin="0,3,0,0"
-                           HorizontalAlignment="Right"/>
+                                                   Text="Воскресенье"
+                                                   Foreground="#8295A8"
+                                                   FontSize="14"
+                                                   Margin="0,3,0,0"
+                                                   HorizontalAlignment="Right"/>
 
                                     </StackPanel>
 
                                 </Grid>
 
                                 <Border Height="1"
-                Background="#263746"
-                Margin="0,22,0,20"/>
+                                        Background="#263746"
+                                        Margin="0,22,0,20"/>
 
-                                <!-- Редактор даты и времени -->
                                 <Grid>
 
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="3*"/>
                                         <ColumnDefinition Width="24"/>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
                                     </Grid.ColumnDefinitions>
 
                                     <!-- ДАТА -->
                                     <Border Grid.Column="0"
-                    Background="#0D1722"
-                    BorderBrush="#223548"
-                    BorderThickness="1"
-                    CornerRadius="16"
-                    Padding="20">
+                                            Background="#0D1722"
+                                            BorderBrush="#223548"
+                                            BorderThickness="1"
+                                            CornerRadius="16"
+                                            Padding="22">
 
                                         <StackPanel>
 
                                             <TextBlock Text="Дата"
-                               Foreground="#8295A8"
-                               FontSize="15"/>
+                                                       Foreground="#8295A8"
+                                                       FontSize="15"/>
 
                                             <TextBlock x:Name="SelectedDateText"
-                               Text="12 июля 2026"
-                               Foreground="White"
-                               FontSize="24"
-                               FontWeight="SemiBold"
-                               HorizontalAlignment="Center"
-                               Margin="0,14,0,18"/>
+                                                       Text="12 июля 2026"
+                                                       Foreground="White"
+                                                       FontSize="25"
+                                                       FontWeight="SemiBold"
+                                                       HorizontalAlignment="Center"
+                                                       Margin="0,12,0,20"/>
 
-                                            <!-- День -->
-                                            <Grid Margin="0,0,0,12">
+                                            <!-- ДЕНЬ -->
+                                            <Grid Margin="0,0,0,14">
 
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="110"/>
-                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="66"/>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="66"/>
                                                 </Grid.ColumnDefinitions>
 
                                                 <TextBlock Text="День"
-                                   Foreground="#B9C6D4"
-                                   FontSize="17"
-                                   VerticalAlignment="Center"/>
+                                                           Foreground="#B9C6D4"
+                                                           FontSize="18"
+                                                           VerticalAlignment="Center"/>
 
                                                 <Button Grid.Column="1"
-                                Content="−"
-                                FontSize="26"
-                                Background="#1A2A3B"
-                                Foreground="White"
-                                BorderThickness="0"
-                                Height="50"
-                                Click="DayMinusButton_Click"/>
+                                                        Style="{StaticResource ValueButtonStyle}"
+                                                        Content="−"
+                                                        Click="DayMinusButton_Click"/>
 
                                                 <TextBlock x:Name="DayValueText"
-                                   Grid.Column="2"
-                                   Text="12"
-                                   Foreground="#2A9DFF"
-                                   FontSize="25"
-                                   FontWeight="SemiBold"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
+                                                           Grid.Column="2"
+                                                           Text="12"
+                                                           Foreground="#2A9DFF"
+                                                           FontSize="29"
+                                                           FontWeight="SemiBold"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
 
                                                 <Button Grid.Column="3"
-                                Content="+"
-                                FontSize="25"
-                                Background="#1A2A3B"
-                                Foreground="White"
-                                BorderThickness="0"
-                                Height="50"
-                                Click="DayPlusButton_Click"/>
+                                                        Style="{StaticResource ValueButtonStyle}"
+                                                        Content="+"
+                                                        Click="DayPlusButton_Click"/>
 
                                             </Grid>
 
-                                            <!-- Месяц -->
-                                            <Grid Margin="0,0,0,12">
+                                            <!-- МЕСЯЦ -->
+                                            <Grid Margin="0,0,0,14">
 
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="110"/>
-                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="66"/>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="66"/>
                                                 </Grid.ColumnDefinitions>
 
                                                 <TextBlock Text="Месяц"
-                                   Foreground="#B9C6D4"
-                                   FontSize="17"
-                                   VerticalAlignment="Center"/>
+                                                           Foreground="#B9C6D4"
+                                                           FontSize="18"
+                                                           VerticalAlignment="Center"/>
 
                                                 <Button Grid.Column="1"
-                                Content="−"
-                                FontSize="26"
-                                Background="#1A2A3B"
-                                Foreground="White"
-                                BorderThickness="0"
-                                Height="50"
-                                Click="MonthMinusButton_Click"/>
+                                                        Style="{StaticResource ValueButtonStyle}"
+                                                        Content="−"
+                                                        Click="MonthMinusButton_Click"/>
 
                                                 <TextBlock x:Name="MonthValueText"
-                                   Grid.Column="2"
-                                   Text="Июль"
-                                   Foreground="#2A9DFF"
-                                   FontSize="22"
-                                   FontWeight="SemiBold"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
+                                                           Grid.Column="2"
+                                                           Text="Июль"
+                                                           Foreground="#2A9DFF"
+                                                           FontSize="24"
+                                                           FontWeight="SemiBold"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
 
                                                 <Button Grid.Column="3"
-                                Content="+"
-                                FontSize="25"
-                                Background="#1A2A3B"
-                                Foreground="White"
-                                BorderThickness="0"
-                                Height="50"
-                                Click="MonthPlusButton_Click"/>
+                                                        Style="{StaticResource ValueButtonStyle}"
+                                                        Content="+"
+                                                        Click="MonthPlusButton_Click"/>
 
                                             </Grid>
 
-                                            <!-- Год -->
+                                            <!-- ГОД -->
                                             <Grid>
 
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="110"/>
-                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="66"/>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="66"/>
                                                 </Grid.ColumnDefinitions>
 
                                                 <TextBlock Text="Год"
-                                   Foreground="#B9C6D4"
-                                   FontSize="17"
-                                   VerticalAlignment="Center"/>
+                                                           Foreground="#B9C6D4"
+                                                           FontSize="18"
+                                                           VerticalAlignment="Center"/>
 
                                                 <Button Grid.Column="1"
-                                Content="−"
-                                FontSize="26"
-                                Background="#1A2A3B"
-                                Foreground="White"
-                                BorderThickness="0"
-                                Height="50"
-                                Click="YearMinusButton_Click"/>
+                                                        Style="{StaticResource ValueButtonStyle}"
+                                                        Content="−"
+                                                        Click="YearMinusButton_Click"/>
 
                                                 <TextBlock x:Name="YearValueText"
-                                   Grid.Column="2"
-                                   Text="2026"
-                                   Foreground="#2A9DFF"
-                                   FontSize="25"
-                                   FontWeight="SemiBold"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
+                                                           Grid.Column="2"
+                                                           Text="2026"
+                                                           Foreground="#2A9DFF"
+                                                           FontSize="29"
+                                                           FontWeight="SemiBold"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
 
                                                 <Button Grid.Column="3"
-                                Content="+"
-                                FontSize="25"
-                                Background="#1A2A3B"
-                                Foreground="White"
-                                BorderThickness="0"
-                                Height="50"
-                                Click="YearPlusButton_Click"/>
+                                                        Style="{StaticResource ValueButtonStyle}"
+                                                        Content="+"
+                                                        Click="YearPlusButton_Click"/>
 
                                             </Grid>
 
@@ -1124,111 +1178,95 @@
 
                                     <!-- ВРЕМЯ -->
                                     <Border Grid.Column="2"
-                    Background="#0D1722"
-                    BorderBrush="#223548"
-                    BorderThickness="1"
-                    CornerRadius="16"
-                    Padding="20">
+                                            Background="#0D1722"
+                                            BorderBrush="#223548"
+                                            BorderThickness="1"
+                                            CornerRadius="16"
+                                            Padding="22">
 
                                         <StackPanel>
 
                                             <TextBlock Text="Время"
-                               Foreground="#8295A8"
-                               FontSize="15"/>
+                                                       Foreground="#8295A8"
+                                                       FontSize="15"/>
 
                                             <TextBlock x:Name="SelectedTimeText"
-                               Text="17:07"
-                               Foreground="White"
-                               FontSize="36"
-                               FontWeight="SemiBold"
-                               HorizontalAlignment="Center"
-                               Margin="0,14,0,24"/>
+                                                       Text="17:07"
+                                                       Foreground="White"
+                                                       FontSize="38"
+                                                       FontWeight="SemiBold"
+                                                       HorizontalAlignment="Center"
+                                                       Margin="0,12,0,25"/>
 
-                                            <!-- Часы -->
+                                            <!-- ЧАСЫ -->
                                             <Grid Margin="0,0,0,18">
 
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="110"/>
-                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="90"/>
+                                                    <ColumnDefinition Width="66"/>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="66"/>
                                                 </Grid.ColumnDefinitions>
 
                                                 <TextBlock Text="Часы"
-                                   Foreground="#B9C6D4"
-                                   FontSize="17"
-                                   VerticalAlignment="Center"/>
+                                                           Foreground="#B9C6D4"
+                                                           FontSize="18"
+                                                           VerticalAlignment="Center"/>
 
                                                 <Button Grid.Column="1"
-                                Content="−"
-                                FontSize="26"
-                                Background="#1A2A3B"
-                                Foreground="White"
-                                BorderThickness="0"
-                                Height="56"
-                                Click="HourMinusButton_Click"/>
+                                                        Style="{StaticResource ValueButtonStyle}"
+                                                        Content="−"
+                                                        Click="HourMinusButton_Click"/>
 
                                                 <TextBlock x:Name="HourValueText"
-                                   Grid.Column="2"
-                                   Text="17"
-                                   Foreground="#2A9DFF"
-                                   FontSize="30"
-                                   FontWeight="SemiBold"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
+                                                           Grid.Column="2"
+                                                           Text="17"
+                                                           Foreground="#2A9DFF"
+                                                           FontSize="31"
+                                                           FontWeight="SemiBold"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
 
                                                 <Button Grid.Column="3"
-                                Content="+"
-                                FontSize="25"
-                                Background="#1A2A3B"
-                                Foreground="White"
-                                BorderThickness="0"
-                                Height="56"
-                                Click="HourPlusButton_Click"/>
+                                                        Style="{StaticResource ValueButtonStyle}"
+                                                        Content="+"
+                                                        Click="HourPlusButton_Click"/>
 
                                             </Grid>
 
-                                            <!-- Минуты -->
+                                            <!-- МИНУТЫ -->
                                             <Grid>
 
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="110"/>
-                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="90"/>
+                                                    <ColumnDefinition Width="66"/>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="66"/>
                                                 </Grid.ColumnDefinitions>
 
                                                 <TextBlock Text="Минуты"
-                                   Foreground="#B9C6D4"
-                                   FontSize="17"
-                                   VerticalAlignment="Center"/>
+                                                           Foreground="#B9C6D4"
+                                                           FontSize="18"
+                                                           VerticalAlignment="Center"/>
 
                                                 <Button Grid.Column="1"
-                                Content="−"
-                                FontSize="26"
-                                Background="#1A2A3B"
-                                Foreground="White"
-                                BorderThickness="0"
-                                Height="56"
-                                Click="MinuteMinusButton_Click"/>
+                                                        Style="{StaticResource ValueButtonStyle}"
+                                                        Content="−"
+                                                        Click="MinuteMinusButton_Click"/>
 
                                                 <TextBlock x:Name="MinuteValueText"
-                                   Grid.Column="2"
-                                   Text="07"
-                                   Foreground="#2A9DFF"
-                                   FontSize="30"
-                                   FontWeight="SemiBold"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
+                                                           Grid.Column="2"
+                                                           Text="07"
+                                                           Foreground="#2A9DFF"
+                                                           FontSize="31"
+                                                           FontWeight="SemiBold"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
 
                                                 <Button Grid.Column="3"
-                                Content="+"
-                                FontSize="25"
-                                Background="#1A2A3B"
-                                Foreground="White"
-                                BorderThickness="0"
-                                Height="56"
-                                Click="MinutePlusButton_Click"/>
+                                                        Style="{StaticResource ValueButtonStyle}"
+                                                        Content="+"
+                                                        Click="MinutePlusButton_Click"/>
 
                                             </Grid>
 
@@ -1238,7 +1276,6 @@
 
                                 </Grid>
 
-                                <!-- Кнопки -->
                                 <Grid Margin="0,22,0,0">
 
                                     <Grid.ColumnDefinitions>
@@ -1249,23 +1286,23 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Button Grid.Column="1"
-                    Content="✓  Применить"
-                    Style="{StaticResource ActionButtonStyle}"
-                    Click="ApplyDateTimeButton_Click"/>
+                                            Content="✓  Применить"
+                                            Style="{StaticResource ActionButtonStyle}"
+                                            Click="ApplyDateTimeButton_Click"/>
 
                                     <Button Grid.Column="3"
-                    Content="⟳  Синхронизировать"
-                    Style="{StaticResource ActionButtonStyle}"
-                    Background="#223548"
-                    Click="SynchronizeTimeButton_Click"/>
+                                            Content="⟳  Синхронизировать"
+                                            Style="{StaticResource ActionButtonStyle}"
+                                            Background="#223548"
+                                            Click="SynchronizeTimeButton_Click"/>
 
                                 </Grid>
 
                                 <TextBlock x:Name="DateTimeResultText"
-                   Text="Изменения применяются к системному времени Windows"
-                   Foreground="#71849A"
-                   FontSize="14"
-                   Margin="0,16,0,0"/>
+                                           Text="Изменения применяются к системному времени Windows"
+                                           Foreground="#71849A"
+                                           FontSize="14"
+                                           Margin="0,16,0,0"/>
 
                             </StackPanel>
 
@@ -1275,7 +1312,10 @@
 
                 </ScrollViewer>
 
+                <!-- ================================================= -->
                 <!-- ОБНОВЛЕНИЯ -->
+                <!-- ================================================= -->
+
                 <Grid x:Name="UpdatePanel"
                       Visibility="Collapsed">
 
@@ -1286,13 +1326,14 @@
 
                 </Grid>
 
+                <!-- ================================================= -->
                 <!-- АВТОМОБИЛЬ -->
-                <ScrollViewer x:Name="CarPanel"
-                              Visibility="Collapsed"
-                              VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Disabled">
+                <!-- ================================================= -->
 
-                    <StackPanel>
+                <ScrollViewer x:Name="CarPanel"
+                              Visibility="Collapsed">
+
+                    <StackPanel Margin="0,0,0,100">
 
                         <TextBlock Text="Автомобиль"
                                    FontSize="32"
@@ -1362,13 +1403,14 @@
 
                 </ScrollViewer>
 
+                <!-- ================================================= -->
                 <!-- О ПРОГРАММЕ -->
-                <ScrollViewer x:Name="AboutPanel"
-                              Visibility="Collapsed"
-                              VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Disabled">
+                <!-- ================================================= -->
 
-                    <StackPanel>
+                <ScrollViewer x:Name="AboutPanel"
+                              Visibility="Collapsed">
+
+                    <StackPanel Margin="0,0,0,100">
 
                         <TextBlock Text="О программе"
                                    FontSize="32"
@@ -1418,7 +1460,311 @@
 
                 </ScrollViewer>
 
+                <!-- ================================================= -->
+                <!-- СПИСОК WI-FI СЕТЕЙ -->
+                <!-- ================================================= -->
+
+                <Grid x:Name="WifiNetworksPanel"
+                      Visibility="Collapsed"
+                      Background="#05080D"
+                      Panel.ZIndex="20">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="18"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Width="52"
+                                Height="52"
+                                Content="‹"
+                                Background="#121C25"
+                                Foreground="White"
+                                BorderThickness="0"
+                                FontSize="28"
+                                Cursor="Hand"
+                                Click="CloseWifiNetworksButton_Click"/>
+
+                        <StackPanel Grid.Column="2"
+                                    VerticalAlignment="Center">
+
+                            <TextBlock Text="Доступные сети"
+                                       Foreground="White"
+                                       FontSize="30"
+                                       FontWeight="Bold"/>
+
+                            <TextBlock x:Name="WifiNetworksStatusText"
+                                       Text="Поиск беспроводных сетей"
+                                       Foreground="#778A9E"
+                                       FontSize="15"
+                                       Margin="0,4,0,0"/>
+
+                        </StackPanel>
+
+                        <Button Grid.Column="3"
+                                Content="↻  Обновить"
+                                Style="{StaticResource ActionButtonStyle}"
+                                Click="RefreshWifiNetworksButton_Click"/>
+
+                    </Grid>
+
+                    <ScrollViewer Grid.Row="2">
+
+                        <StackPanel x:Name="WifiNetworksStackPanel"
+                                    Margin="0,0,0,100"/>
+
+                    </ScrollViewer>
+
+                </Grid>
+                <!-- СПИСОК BLUETOOTH-УСТРОЙСТВ -->
+                <!-- BLUETOOTH-УСТРОЙСТВА -->
+                <Grid x:Name="BluetoothDevicesPanel"
+      Visibility="Collapsed"
+      Background="#05080D"
+      Panel.ZIndex="20">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Заголовок -->
+                    <Grid>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="18"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Width="52"
+                Height="52"
+                Content="‹"
+                Background="#121C25"
+                Foreground="White"
+                BorderThickness="0"
+                FontSize="28"
+                Cursor="Hand"
+                Click="CloseBluetoothDevicesButton_Click"/>
+
+                        <StackPanel Grid.Column="2"
+                    VerticalAlignment="Center">
+
+                            <TextBlock Text="Bluetooth-устройства"
+                       Foreground="White"
+                       FontSize="30"
+                       FontWeight="Bold"/>
+
+                            <TextBlock x:Name="BluetoothDevicesStatusText"
+                       Text="Поиск устройств"
+                       Foreground="#778A9E"
+                       FontSize="15"
+                       Margin="0,4,0,0"/>
+
+                        </StackPanel>
+
+                        <Button Grid.Column="3"
+                Content="↻  Обновить"
+                Style="{StaticResource ActionButtonStyle}"
+                Click="RefreshBluetoothDevicesButton_Click"/>
+
+                    </Grid>
+
+                    <ScrollViewer Grid.Row="2">
+
+                        <StackPanel Margin="0,0,0,100">
+
+                            <!-- Информация о CarShell -->
+                            <Border Style="{StaticResource SettingsCardStyle}">
+
+                                <Grid>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Width="56"
+                            Height="56"
+                            Background="#102E49"
+                            CornerRadius="15">
+
+                                        <TextBlock Text="ᛒ"
+                                   Foreground="#2A9DFF"
+                                   FontSize="32"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+
+                                    </Border>
+
+                                    <StackPanel Grid.Column="1"
+                                VerticalAlignment="Center">
+
+                                        <TextBlock Text="Это устройство"
+                                   Foreground="#8295A8"
+                                   FontSize="14"/>
+
+                                        <TextBlock x:Name="BluetoothComputerNameText"
+                                   Text="CarShell"
+                                   Foreground="White"
+                                   FontSize="22"
+                                   FontWeight="SemiBold"
+                                   Margin="0,4,0,0"/>
+
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Column="2"
+                               Text="Видимо для устройств"
+                               Foreground="#39B980"
+                               FontSize="15"
+                               VerticalAlignment="Center"/>
+
+                                </Grid>
+
+                            </Border>
+
+                            <!-- Подключённые и сопряжённые -->
+                            <TextBlock Text="Подключённые и сохранённые"
+                       Foreground="White"
+                       FontSize="21"
+                       FontWeight="SemiBold"
+                       Margin="0,12,0,14"/>
+
+                            <StackPanel x:Name="BluetoothPairedDevicesStackPanel"/>
+
+                            <!-- Доступные -->
+                            <TextBlock Text="Доступные устройства"
+                       Foreground="White"
+                       FontSize="21"
+                       FontWeight="SemiBold"
+                       Margin="0,18,0,14"/>
+
+                            <StackPanel x:Name="BluetoothAvailableDevicesStackPanel"/>
+
+                        </StackPanel>
+
+                    </ScrollViewer>
+
+                </Grid>
+
             </Grid>
+
+        </Grid>
+
+        <!-- ========================================================= -->
+        <!-- ОКНО ВВОДА ПАРОЛЯ WI-FI -->
+        <!-- ========================================================= -->
+
+        <Grid x:Name="WifiPasswordOverlay"
+              Grid.RowSpan="2"
+              Visibility="Collapsed"
+              Background="#E605080D"
+              Panel.ZIndex="100">
+
+            <Border Width="580"
+                    Background="#111A23"
+                    BorderBrush="#26394D"
+                    BorderThickness="1"
+                    CornerRadius="22"
+                    Padding="30"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+
+                <StackPanel>
+
+                    <Grid>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+
+                            <TextBlock Text="Подключение к Wi-Fi"
+                                       Foreground="White"
+                                       FontSize="28"
+                                       FontWeight="Bold"/>
+
+                            <TextBlock x:Name="WifiPasswordNetworkText"
+                                       Text="Название сети"
+                                       Foreground="#4CA9DD"
+                                       FontSize="20"
+                                       Margin="0,8,0,0"/>
+
+                        </StackPanel>
+
+                        <Button Grid.Column="1"
+                                Width="48"
+                                Height="48"
+                                Content="×"
+                                Foreground="#AEBCCC"
+                                Background="#1B2A38"
+                                BorderThickness="0"
+                                FontSize="26"
+                                Click="CancelWifiPasswordButton_Click"/>
+
+                    </Grid>
+
+                    <TextBlock Text="Введите пароль сети"
+                               Foreground="#8295A8"
+                               FontSize="16"
+                               Margin="0,24,0,8"/>
+
+                    <PasswordBox x:Name="WifiPasswordBox"
+                                 Height="60"
+                                 FontSize="22"
+                                 Padding="16,0"
+                                 VerticalContentAlignment="Center"
+                                 Foreground="White"
+                                 Background="#0B141D"
+                                 BorderBrush="#2B4258"
+                                 BorderThickness="1"/>
+
+                    <TextBlock x:Name="WifiPasswordErrorText"
+                               Text=""
+                               Foreground="#E57373"
+                               FontSize="15"
+                               TextWrapping="Wrap"
+                               Margin="0,10,0,0"/>
+
+                    <Grid Margin="0,26,0,0">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="180"/>
+                            <ColumnDefinition Width="14"/>
+                            <ColumnDefinition Width="190"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="1"
+                                Content="Отмена"
+                                Style="{StaticResource ActionButtonStyle}"
+                                Background="#263746"
+                                Click="CancelWifiPasswordButton_Click"/>
+
+                        <Button Grid.Column="3"
+                                Content="Подключиться"
+                                Style="{StaticResource ActionButtonStyle}"
+                                Click="ConnectWifiPasswordButton_Click"/>
+
+                    </Grid>
+
+                </StackPanel>
+
+            </Border>
 
         </Grid>
 
