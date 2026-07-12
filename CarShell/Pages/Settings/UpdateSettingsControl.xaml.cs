@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,6 +14,7 @@ namespace CarShell.Pages.Settings
     {
         private UpdateInfo? latestUpdate;
         private UpdateInfo? selectedUpdate;
+
         private string? downloadedZipPath;
 
         private bool isInitialized;
@@ -77,7 +79,9 @@ namespace CarShell.Pages.Settings
                 List<UpdateInfo> versions =
                     await UpdateService.GetVersionsAsync();
 
-                VersionsComboBox.ItemsSource = versions;
+                VersionsComboBox.ItemsSource =
+                    versions;
+
                 VersionsComboBox.DisplayMemberPath =
                     nameof(UpdateInfo.Version);
 
@@ -99,7 +103,7 @@ namespace CarShell.Pages.Settings
                         "Опубликованные версии не найдены";
 
                     NotesText.Text =
-                        "Проверьте, что в GitHub Releases имеются опубликованные релизы с ZIP-файлом обновления.";
+                        "В GitHub Releases не найдены релизы с файлом CarShell-win-x64.zip.";
                 }
             }
             catch (Exception ex)
@@ -191,7 +195,8 @@ namespace CarShell.Pages.Settings
                 return;
             }
 
-            await DownloadVersionAsync(latestUpdate);
+            await DownloadVersionAsync(
+                latestUpdate);
         }
 
         private async void Rollback_Click(
@@ -230,10 +235,18 @@ namespace CarShell.Pages.Settings
                     $"Версия {selectedVersion} уже установлена.\n\n" +
                     "Скачать её повторно?";
             }
+            else if (IsVersionNewer(
+                         selectedVersion,
+                         currentVersion))
+            {
+                message =
+                    $"Скачать обновление {selectedVersion}?\n\n" +
+                    $"Текущая версия: {currentVersion}";
+            }
             else
             {
                 message =
-                    $"Скачать версию {selectedVersion}?\n\n" +
+                    $"Выполнить откат до версии {selectedVersion}?\n\n" +
                     $"Текущая версия: {currentVersion}\n\n" +
                     "После скачивания нажмите «Установить».";
             }
@@ -250,7 +263,8 @@ namespace CarShell.Pages.Settings
                 return;
             }
 
-            await DownloadVersionAsync(selectedUpdate);
+            await DownloadVersionAsync(
+                selectedUpdate);
         }
 
         private async Task DownloadVersionAsync(
@@ -258,13 +272,14 @@ namespace CarShell.Pages.Settings
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(update.DownloadUrl))
+                if (string.IsNullOrWhiteSpace(
+                        update.DownloadUrl))
                 {
                     StatusText.Text =
                         "🔴 У выбранного релиза нет ZIP-файла";
 
                     NotesText.Text =
-                        "Проверьте наличие файла CarShell-win-x64.zip в GitHub Release.";
+                        "В GitHub Release должен находиться файл CarShell-win-x64.zip.";
 
                     return;
                 }
@@ -288,7 +303,7 @@ namespace CarShell.Pages.Settings
                 if (string.IsNullOrWhiteSpace(zipPath))
                 {
                     throw new InvalidOperationException(
-                        "Сервис обновлений не вернул путь к скачанному файлу.");
+                        "Сервис обновления не вернул путь к файлу.");
                 }
 
                 if (!File.Exists(zipPath))
@@ -332,7 +347,8 @@ namespace CarShell.Pages.Settings
 
             try
             {
-                if (string.IsNullOrWhiteSpace(downloadedZipPath))
+                if (string.IsNullOrWhiteSpace(
+                        downloadedZipPath))
                 {
                     StatusText.Text =
                         "Сначала скачайте обновление";
@@ -346,15 +362,16 @@ namespace CarShell.Pages.Settings
                         "🔴 Скачанный ZIP-файл не найден";
 
                     downloadedZipPath = null;
-                    UpdateButtonsState();
 
+                    UpdateButtonsState();
                     return;
                 }
 
                 string applicationDirectory =
-                    AppDomain.CurrentDomain.BaseDirectory.TrimEnd(
-                        Path.DirectorySeparatorChar,
-                        Path.AltDirectorySeparatorChar);
+                    AppDomain.CurrentDomain.BaseDirectory
+                        .TrimEnd(
+                            Path.DirectorySeparatorChar,
+                            Path.AltDirectorySeparatorChar);
 
                 string updaterPath =
                     Path.Combine(
@@ -374,7 +391,7 @@ namespace CarShell.Pages.Settings
 
                 MessageBoxResult result =
                     MessageBox.Show(
-                        "CarShell будет закрыт, после чего запустится установка.\n\nПродолжить?",
+                        "CarShell будет закрыт, после чего начнётся установка.\n\nПродолжить?",
                         "Установка обновления",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Warning);
@@ -387,13 +404,16 @@ namespace CarShell.Pages.Settings
                 SetBusyState(true);
 
                 StatusText.Text =
-                    "Запуск программы обновления...";
+                    "Подготовка к установке...";
+
+                CreateUpdateLock();
 
                 var startInfo =
                     new ProcessStartInfo
                     {
                         FileName = updaterPath,
-                        WorkingDirectory = applicationDirectory,
+                        WorkingDirectory =
+                            applicationDirectory,
                         UseShellExecute = true
                     };
 
@@ -403,13 +423,21 @@ namespace CarShell.Pages.Settings
                 startInfo.ArgumentList.Add(
                     downloadedZipPath);
 
-                Process? updaterProcess =
-                    Process.Start(startInfo);
-
-                if (updaterProcess == null)
+                try
                 {
-                    throw new InvalidOperationException(
-                        "Не удалось запустить Updater.exe.");
+                    Process? updaterProcess =
+                        Process.Start(startInfo);
+
+                    if (updaterProcess == null)
+                    {
+                        throw new InvalidOperationException(
+                            "Не удалось запустить Updater.exe.");
+                    }
+                }
+                catch
+                {
+                    DeleteUpdateLock();
+                    throw;
                 }
 
                 Application.Current.Shutdown();
@@ -425,6 +453,34 @@ namespace CarShell.Pages.Settings
                     ex.Message;
 
                 UpdateButtonsState();
+            }
+        }
+
+        private static void CreateUpdateLock()
+        {
+            Directory.CreateDirectory(
+                App.UpdateLockDirectory);
+
+            File.WriteAllText(
+                App.UpdateLockPath,
+                DateTime.UtcNow.ToString(
+                    "O",
+                    CultureInfo.InvariantCulture));
+        }
+
+        private static void DeleteUpdateLock()
+        {
+            try
+            {
+                if (File.Exists(App.UpdateLockPath))
+                {
+                    File.Delete(App.UpdateLockPath);
+                }
+            }
+            catch
+            {
+                // Ошибка удаления блокировки здесь
+                // не должна скрывать основную ошибку.
             }
         }
 
@@ -448,7 +504,6 @@ namespace CarShell.Pages.Settings
                     "Выбранная версия: не выбрана";
 
                 UpdateButtonsState();
-
                 return;
             }
 
@@ -486,7 +541,8 @@ namespace CarShell.Pages.Settings
             UpdateButtonsState();
         }
 
-        private void SetBusyState(bool busy)
+        private void SetBusyState(
+            bool busy)
         {
             isBusy = busy;
 
@@ -514,7 +570,6 @@ namespace CarShell.Pages.Settings
                 DownloadButton.IsEnabled = false;
                 InstallButton.IsEnabled = false;
                 RollbackButton.IsEnabled = false;
-
                 return;
             }
 
