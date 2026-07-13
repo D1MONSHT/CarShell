@@ -101,8 +101,7 @@
                                 VerticalAlignment="Top" Grid.RowSpan="1">
 
                         <Button Content="⌂" Click="Home_Click" Style="{StaticResource SideButton}"/>
-                        <Button Content="@" Click="Maps_Click" Style="{StaticResource SideButton}"/>
-                        <Button Content="➤" Click="Navigation_Click" Style="{StaticResource SideButton}"/>
+               
                         <Button Content="♪" Click="Music_Click" Style="{StaticResource SideButton}"/>
                         <Button Content="◉" Click="Camera_Click" Style="{StaticResource SideButton}"/>
                         <Button Content="!" Click="Board_Click" Style="{StaticResource SideButton}"/>
