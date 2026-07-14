@@ -316,21 +316,12 @@ namespace CarShell.Pages
         {
             try
             {
-                string version =
-                    VersionInfo.Version;
-
                 SidebarVersionText.Text =
-                    $"Версия {version}";
-
-                AboutVersionText.Text =
-                    $"Версия {version}";
+                    $"Версия {VersionInfo.Version}";
             }
             catch
             {
                 SidebarVersionText.Text =
-                    "Версия неизвестна";
-
-                AboutVersionText.Text =
                     "Версия неизвестна";
             }
         }

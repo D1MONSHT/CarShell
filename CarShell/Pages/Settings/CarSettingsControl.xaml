@@ -1,0 +1,106 @@
+<UserControl x:Class="CarShell.Pages.Settings.CarSettingsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent">
+
+    <UserControl.Resources>
+
+        <Style x:Key="SettingsCardStyle"
+               TargetType="Border">
+            <Setter Property="Background"
+                    Value="#101820"/>
+            <Setter Property="BorderBrush"
+                    Value="#1B2A38"/>
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+            <Setter Property="CornerRadius"
+                    Value="18"/>
+            <Setter Property="Padding"
+                    Value="24"/>
+            <Setter Property="Margin"
+                    Value="0,0,0,16"/>
+        </Style>
+
+        <Style x:Key="RightPanelScrollStyle"
+               TargetType="ScrollViewer">
+            <Setter Property="VerticalScrollBarVisibility"
+                    Value="Hidden"/>
+            <Setter Property="HorizontalScrollBarVisibility"
+                    Value="Disabled"/>
+            <Setter Property="PanningMode"
+                    Value="VerticalOnly"/>
+            <Setter Property="PanningDeceleration"
+                    Value="0.0015"/>
+            <Setter Property="PanningRatio"
+                    Value="1.1"/>
+            <Setter Property="CanContentScroll"
+                    Value="False"/>
+            <Setter Property="IsManipulationEnabled"
+                    Value="True"/>
+            <Setter Property="Focusable"
+                    Value="False"/>
+            <EventSetter Event="ManipulationBoundaryFeedback"
+                         Handler="ScrollViewer_ManipulationBoundaryFeedback"/>
+        </Style>
+
+    </UserControl.Resources>
+
+    <ScrollViewer Style="{StaticResource RightPanelScrollStyle}">
+
+        <StackPanel Margin="0,0,0,100"
+                    Background="Transparent">
+
+            <TextBlock Text="Автомобиль"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       Foreground="White"/>
+
+            <TextBlock Text="Подключение CarShell к системам автомобиля"
+                       FontSize="17"
+                       Foreground="#778A9E"
+                       Margin="0,5,0,24"/>
+
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <StackPanel>
+                    <TextBlock Text="CAN-интерфейс"
+                               FontSize="21"
+                               FontWeight="SemiBold"
+                               Foreground="White"/>
+                    <TextBlock Text="Настройка подключения STM32 и обмена данными по CAN"
+                               Foreground="#8295A8"
+                               FontSize="15"
+                               Margin="0,6,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <StackPanel>
+                    <TextBlock Text="OBD"
+                               FontSize="21"
+                               FontWeight="SemiBold"
+                               Foreground="White"/>
+                    <TextBlock Text="Диагностический адаптер и параметры двигателя"
+                               Foreground="#8295A8"
+                               FontSize="15"
+                               Margin="0,6,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SettingsCardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Сон и пробуждение"
+                               FontSize="21"
+                               FontWeight="SemiBold"
+                               Foreground="White"/>
+                    <TextBlock Text="Реакция Surface на включение и отключение ACC"
+                               Foreground="#8295A8"
+                               FontSize="15"
+                               Margin="0,6,0,0"/>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+
+    </ScrollViewer>
+
+</UserControl>

@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="CarShell.Pages.SettingsPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:settings="clr-namespace:CarShell.Pages.Settings"
              Background="#05080D">
 
     <UserControl.Resources>
@@ -1319,7 +1320,7 @@
                 <!-- ОБНОВЛЕНИЯ -->
                 <!-- ================================================= -->
 
-                <ScrollViewer x:Name="UpdatePanel"
+                <Grid x:Name="UpdatePanel"
                       Visibility="Collapsed">
 
                     <Frame x:Name="UpdateSettingsFrame"
@@ -1327,141 +1328,29 @@
                            Background="Transparent"
                            BorderThickness="0"/>
 
-                </ScrollViewer>
+                </Grid>
 
                 <!-- ================================================= -->
                 <!-- АВТОМОБИЛЬ -->
                 <!-- ================================================= -->
 
-                <ScrollViewer x:Name="CarPanel"
-                              Visibility="Collapsed">
+                <Grid x:Name="CarPanel"
+                      Visibility="Collapsed">
 
-                    <StackPanel Margin="0,0,0,100">
+                    <settings:CarSettingsControl/>
 
-                        <TextBlock Text="Автомобиль"
-                                   FontSize="32"
-                                   FontWeight="Bold"
-                                   Foreground="White"/>
-
-                        <TextBlock Text="Подключение CarShell к системам автомобиля"
-                                   FontSize="17"
-                                   Foreground="#778A9E"
-                                   Margin="0,5,0,24"/>
-
-                        <Border Style="{StaticResource SettingsCardStyle}">
-
-                            <StackPanel>
-
-                                <TextBlock Text="CAN-интерфейс"
-                                           FontSize="21"
-                                           FontWeight="SemiBold"
-                                           Foreground="White"/>
-
-                                <TextBlock Text="Настройка подключения STM32 и обмена данными по CAN"
-                                           Foreground="#8295A8"
-                                           FontSize="15"
-                                           Margin="0,6,0,0"/>
-
-                            </StackPanel>
-
-                        </Border>
-
-                        <Border Style="{StaticResource SettingsCardStyle}">
-
-                            <StackPanel>
-
-                                <TextBlock Text="OBD"
-                                           FontSize="21"
-                                           FontWeight="SemiBold"
-                                           Foreground="White"/>
-
-                                <TextBlock Text="Диагностический адаптер и параметры двигателя"
-                                           Foreground="#8295A8"
-                                           FontSize="15"
-                                           Margin="0,6,0,0"/>
-
-                            </StackPanel>
-
-                        </Border>
-
-                        <Border Style="{StaticResource SettingsCardStyle}">
-
-                            <StackPanel>
-
-                                <TextBlock Text="Сон и пробуждение"
-                                           FontSize="21"
-                                           FontWeight="SemiBold"
-                                           Foreground="White"/>
-
-                                <TextBlock Text="Реакция Surface на включение и отключение ACC"
-                                           Foreground="#8295A8"
-                                           FontSize="15"
-                                           Margin="0,6,0,0"/>
-
-                            </StackPanel>
-
-                        </Border>
-
-                    </StackPanel>
-
-                </ScrollViewer>
+                </Grid>
 
                 <!-- ================================================= -->
                 <!-- О ПРОГРАММЕ -->
                 <!-- ================================================= -->
 
-                <ScrollViewer x:Name="AboutPanel"
-                              Visibility="Collapsed">
+                <Grid x:Name="AboutPanel"
+                      Visibility="Collapsed">
 
-                    <StackPanel Margin="0,0,0,100">
+                    <settings:AboutSettingsControl/>
 
-                        <TextBlock Text="О программе"
-                                   FontSize="32"
-                                   FontWeight="Bold"
-                                   Foreground="White"/>
-
-                        <TextBlock Text="Информация о CarShell"
-                                   FontSize="17"
-                                   Foreground="#778A9E"
-                                   Margin="0,5,0,24"/>
-
-                        <Border Style="{StaticResource SettingsCardStyle}">
-
-                            <StackPanel>
-
-                                <TextBlock Text="CarShell"
-                                           FontSize="31"
-                                           FontWeight="Bold"
-                                           Foreground="White"/>
-
-                                <TextBlock Text="Автомобильная мультимедийная система"
-                                           FontSize="17"
-                                           Foreground="#8295A8"
-                                           Margin="0,8,0,0"/>
-
-                                <TextBlock x:Name="AboutVersionText"
-                                           Text="Версия 1.0.0"
-                                           FontSize="16"
-                                           Foreground="#4CA9DD"
-                                           Margin="0,22,0,0"/>
-
-                                <TextBlock Text="Платформа: Windows 10 IoT Enterprise LTSC 2021"
-                                           FontSize="15"
-                                           Foreground="#8295A8"
-                                           Margin="0,7,0,0"/>
-
-                                <TextBlock Text="Интерфейс: .NET 8 WPF"
-                                           FontSize="15"
-                                           Foreground="#8295A8"
-                                           Margin="0,7,0,0"/>
-
-                            </StackPanel>
-
-                        </Border>
-
-                    </StackPanel>
-
-                </ScrollViewer>
+                </Grid>
 
                 <!-- ================================================= -->
                 <!-- СПИСОК WI-FI СЕТЕЙ -->

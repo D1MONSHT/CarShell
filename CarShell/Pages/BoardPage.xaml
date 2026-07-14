@@ -1,69 +1,311 @@
 ﻿<UserControl x:Class="CarShell.Pages.BoardPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Background="#05080D">
+             xmlns:controls="clr-namespace:CarShell.Controls"
+             Background="#05070A">
 
-    <Grid Margin="24">
+    <UserControl.Resources>
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="#0B0F14"/>
+            <Setter Property="BorderBrush" Value="#252B33"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+        </Style>
+
+        <Style x:Key="Title" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#C5CBD2"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        </Style>
+
+        <Style x:Key="Value" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="12,7,12,9">
         <Grid.RowDefinitions>
-            <RowDefinition Height="70"/>
-            <RowDefinition Height="120"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="42"/>
+            <RowDefinition Height="2.35*"/>
+            <RowDefinition Height="1.20*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Поток данных"
-                   FontSize="34"
-                   FontWeight="Bold"
-                   Foreground="White"
-                   VerticalAlignment="Center"/>
-
-        <UniformGrid Grid.Row="1" Columns="6" Rows="2">
-            <Button Content="ECU" Click="Ecu_Click" Margin="6" FontSize="24"/>
-            <Button Content="ABS" Click="Abs_Click" Margin="6" FontSize="24"/>
-            <Button Content="UEC" Click="Body_Click" Margin="6" FontSize="24"/>
-            <Button Content="REC" Click="Body_Click" Margin="6" FontSize="24"/>
-            <Button Content="CIM" Click="Body_Click" Margin="6" FontSize="24"/>
-            <Button Content="IPC" Click="Body_Click" Margin="6" FontSize="24"/>
-            <Button Content="DDM" Click="Body_Click" Margin="6" FontSize="24"/>
-            <Button Content="PDM" Click="Body_Click" Margin="6" FontSize="24"/>
-            <Button Content="HVAC" Click="Body_Click" Margin="6" FontSize="24"/>
-            <Button Content="RADIO" Click="Body_Click" Margin="6" FontSize="24"/>
-            <Button Content="⭐" Click="Fav_Click" Margin="6" FontSize="24"/>
-            <Button Content="ВСЕ" Click="All_Click" Margin="6" FontSize="24"/>
-        </UniformGrid>
-
-        <Grid Grid.Row="2" Margin="0,18,0,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="58"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <TextBox x:Name="SearchBox"
-                     Height="50"
-                     FontSize="22"
-                     Padding="14,6"
-                     Background="#10151B"
-                     Foreground="White"
-                     BorderBrush="#27384A"
-                     TextChanged="SearchBox_TextChanged"
-                     Text=""/>
-
-            <ListView x:Name="DataList"
-                      Grid.Row="1"
-                      Background="#10151B"
-                      BorderBrush="#1C2A38"
-                      Foreground="White"
-                      FontSize="22">
-
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="★" Width="60" DisplayMemberBinding="{Binding FavoriteMark}"/>
-                        <GridViewColumn Header="Параметр" Width="360" DisplayMemberBinding="{Binding Name}"/>
-                        <GridViewColumn Header="Значение" Width="180" DisplayMemberBinding="{Binding Value}"/>
-                        <GridViewColumn Header="Ед." Width="120" DisplayMemberBinding="{Binding Unit}"/>
-                        <GridViewColumn Header="Статус" Width="160" DisplayMemberBinding="{Binding Status}"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+        <Grid>
+            <TextBlock Text="Автомобиль" Foreground="White" FontSize="21"
+                       FontWeight="SemiBold" VerticalAlignment="Center"/>
+            <TextBlock x:Name="ClockText" Text="16:20" Foreground="White"
+                       FontSize="23" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+                        VerticalAlignment="Center">
+                <Ellipse x:Name="CanStatusEllipse" Width="8" Height="8"
+                         Fill="#55C75A" Margin="0,0,7,0"/>
+                <TextBlock x:Name="ConnectionStatusText" Text="CAN подключён"
+                           Foreground="#83E287" FontSize="12" Margin="0,0,18,0"/>
+                <TextBlock x:Name="TopBatteryText" Text="14.2 V"
+                           Foreground="White" FontSize="16"/>
+            </StackPanel>
         </Grid>
+
+        <Grid Grid.Row="1" ClipToBounds="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.06*"/>
+                <ColumnDefinition Width="0.88*"/>
+                <ColumnDefinition Width="1.06*"/>
+            </Grid.ColumnDefinitions>
+
+            <controls:RoundGauge x:Name="SpeedGauge" Grid.Column="0"
+                                 Minimum="0" Maximum="240"
+                                 MajorStep="20" MinorStep="5"
+                                 LabelDivisor="1" Unit="km/h"
+                                 Margin="0,0,6,0"/>
+
+            <Border Grid.Column="1" Style="{StaticResource Card}" Margin="2,4">
+                <Grid Margin="8,6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock x:Name="LowBeamIndicator" Text="●" Foreground="#62D45F"
+                                   FontSize="18" Margin="8,0"/>
+                        <TextBlock x:Name="HandbrakeIndicator" Text="Ⓟ" Foreground="#F52C34"
+                                   FontSize="19" Margin="8,0"/>
+                        <TextBlock x:Name="SeatbeltIndicator" Text="⚠" Foreground="#F52C34"
+                                   FontSize="18" Margin="8,0"/>
+                    </StackPanel>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="36"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="36"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock Text="ПЛ" Foreground="#7F8994" FontSize="9"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="FrontLeftTireText" Text="2.3"
+                                       Foreground="#69D66D" FontSize="15" FontWeight="SemiBold"
+                                       HorizontalAlignment="Center" Margin="0,0,0,34"/>
+                            <TextBlock Text="ЗЛ" Foreground="#7F8994" FontSize="9"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="RearLeftTireText" Text="2.4"
+                                       Foreground="#69D66D" FontSize="15" FontWeight="SemiBold"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <Viewbox Grid.Column="1" Stretch="Uniform" Margin="2">
+                            <Grid Width="150" Height="260">
+                                <Ellipse Width="88" Height="222" Fill="#56000000"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                                <!-- Силуэт Opel Vectra C Kombi сверху -->
+                                <Path Fill="#C8CDD2" Stroke="#F3F4F5" StrokeThickness="2"
+                                      Data="M48,8 C37,15 32,31 30,52 L23,202
+                                            C22,225 35,248 50,256
+                                            L100,256 C115,248 128,225 127,202
+                                            L120,52 C118,31 113,15 102,8 Z"/>
+                                <Path Fill="#171C22" Stroke="#707881" StrokeThickness="2"
+                                      Data="M47,50 C52,30 61,21 75,20
+                                            C89,21 98,30 103,50 L108,181
+                                            C103,202 91,214 75,215
+                                            C59,214 47,202 42,181 Z"/>
+                                <Path Fill="#080C10" Stroke="#555E67" StrokeThickness="1"
+                                      Data="M48,54 C54,36 63,28 75,27
+                                            C87,28 96,36 102,54 L98,84 L52,84 Z"/>
+                                <Path Fill="#080C10" Stroke="#555E67" StrokeThickness="1"
+                                      Data="M49,169 L101,169 L98,198
+                                            C91,207 84,211 75,211
+                                            C66,211 59,207 52,198 Z"/>
+
+                                <Line X1="38" Y1="105" X2="112" Y2="105"
+                                      Stroke="#8F959B" StrokeThickness="1"/>
+                                <Line X1="36" Y1="158" X2="114" Y2="158"
+                                      Stroke="#8F959B" StrokeThickness="1"/>
+
+                                <Border x:Name="FrontLeftDoorIndicator"
+                                        Width="45" Height="10" Background="#A9FF222C"
+                                        BorderBrush="#FF5960" BorderThickness="1"
+                                        HorizontalAlignment="Left" VerticalAlignment="Top"
+                                        Margin="2,75,0,0" RenderTransformOrigin="1,0.5">
+                                    <Border.RenderTransform>
+                                        <RotateTransform Angle="-27"/>
+                                    </Border.RenderTransform>
+                                </Border>
+
+                                <Border x:Name="FrontRightDoorIndicator"
+                                        Width="45" Height="10" Background="#A9FF222C"
+                                        BorderBrush="#FF5960" BorderThickness="1"
+                                        HorizontalAlignment="Right" VerticalAlignment="Top"
+                                        Margin="0,75,2,0" RenderTransformOrigin="0,0.5">
+                                    <Border.RenderTransform>
+                                        <RotateTransform Angle="27"/>
+                                    </Border.RenderTransform>
+                                </Border>
+
+                                <Border x:Name="RearLeftDoorIndicator"
+                                        Width="42" Height="10" Background="#A9FF222C"
+                                        BorderBrush="#FF5960" BorderThickness="1"
+                                        HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                                        Margin="3,0,0,77" RenderTransformOrigin="1,0.5">
+                                    <Border.RenderTransform>
+                                        <RotateTransform Angle="24"/>
+                                    </Border.RenderTransform>
+                                </Border>
+
+                                <Border x:Name="RearRightDoorIndicator"
+                                        Width="42" Height="10" Background="#A9FF222C"
+                                        BorderBrush="#FF5960" BorderThickness="1"
+                                        HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                        Margin="0,0,3,77" RenderTransformOrigin="0,0.5">
+                                    <Border.RenderTransform>
+                                        <RotateTransform Angle="-24"/>
+                                    </Border.RenderTransform>
+                                </Border>
+
+                                <Border x:Name="TrunkIndicator"
+                                        Width="72" Height="12" Background="#41464B"
+                                        BorderBrush="#9B9FA4" BorderThickness="1"
+                                        CornerRadius="3"
+                                        HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                                        Margin="0,0,0,7"/>
+                            </Grid>
+                        </Viewbox>
+
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                            <TextBlock Text="ПП" Foreground="#7F8994" FontSize="9"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="FrontRightTireText" Text="2.3"
+                                       Foreground="#69D66D" FontSize="15" FontWeight="SemiBold"
+                                       HorizontalAlignment="Center" Margin="0,0,0,34"/>
+                            <TextBlock Text="ЗП" Foreground="#7F8994" FontSize="9"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="RearRightTireText" Text="2.4"
+                                       Foreground="#69D66D" FontSize="15" FontWeight="SemiBold"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.ColumnSpan="3" VerticalAlignment="Bottom"
+                                    HorizontalAlignment="Center" Margin="0,0,0,2">
+                            <TextBlock x:Name="VehicleStatusText" Text="Системы в норме"
+                                       Foreground="#E0E4E8" FontSize="12"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="DoorsStatusText" Text="Всё закрыто"
+                                       Foreground="#929BA5" FontSize="10"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                            <TextBlock Text="ПЕРЕДАЧА" Foreground="#737C86" FontSize="8"/>
+                            <TextBlock x:Name="GearText" Text="N" Foreground="White"
+                                       FontSize="27" FontWeight="SemiBold"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                            <TextBlock Text="ПРОБЕГ" Foreground="#737C86" FontSize="8"/>
+                            <TextBlock x:Name="MileageText" Text="235 678 км"
+                                       Foreground="#E2E6EA" FontSize="10"
+                                       Margin="0,7,0,0"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                            <TextBlock Text="ШИНЫ" Foreground="#737C86" FontSize="8"/>
+                            <TextBlock x:Name="TireStatusText" Text="НОРМА"
+                                       Foreground="#69D66D" FontSize="11"
+                                       FontWeight="SemiBold" Margin="0,6,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <controls:RoundGauge x:Name="RpmGauge" Grid.Column="2"
+                                 Minimum="0" Maximum="6000"
+                                 MajorStep="1000" MinorStep="200"
+                                 RedZoneStart="5000" LabelDivisor="1000"
+                                 Unit="rpm" Margin="6,0,0,0"/>
+        </Grid>
+
+        <UniformGrid Grid.Row="2" Columns="5" Rows="2" Margin="0,4,0,0">
+            <Border Style="{StaticResource Card}" Margin="3">
+                <StackPanel Margin="10,7">
+                    <TextBlock Text="Температура ОЖ" Style="{StaticResource Title}"/>
+                    <TextBlock x:Name="CoolantTemperatureText" Text="90 °C"
+                           Style="{StaticResource Value}" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="3">
+                <StackPanel Margin="10,7">
+                    <TextBlock Text="Температура масла" Style="{StaticResource Title}"/>
+                    <TextBlock x:Name="OilTemperatureText" Text="96 °C"
+                           Style="{StaticResource Value}" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="3">
+                <StackPanel Margin="10,7">
+                    <TextBlock Text="Давление наддува" Style="{StaticResource Title}"/>
+                    <TextBlock x:Name="BoostText" Text="1.35 bar"
+                           Style="{StaticResource Value}" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="3">
+                <StackPanel Margin="10,7">
+                    <TextBlock Text="Напряжение АКБ" Style="{StaticResource Title}"/>
+                    <TextBlock x:Name="BatteryText" Text="14.2 V"
+                           Style="{StaticResource Value}" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="3">
+                <StackPanel Margin="10,7">
+                    <TextBlock Text="Уровень топлива" Style="{StaticResource Title}"/>
+                    <TextBlock x:Name="FuelLevelText" Text="42 %"
+                           Style="{StaticResource Value}" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="3">
+                <StackPanel Margin="10,7">
+                    <TextBlock Text="Мгновенный расход" Style="{StaticResource Title}"/>
+                    <TextBlock x:Name="InstantConsumptionText" Text="4.2 л/100"
+                           Style="{StaticResource Value}" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="3">
+                <StackPanel Margin="10,7">
+                    <TextBlock Text="Средний расход" Style="{StaticResource Title}"/>
+                    <TextBlock x:Name="AverageConsumptionText" Text="5.6 л/100"
+                           Style="{StaticResource Value}" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="3">
+                <StackPanel Margin="10,7">
+                    <TextBlock Text="Запас хода" Style="{StaticResource Title}"/>
+                    <TextBlock x:Name="RangeText" Text="568 км"
+                           Style="{StaticResource Value}" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="3">
+                <StackPanel Margin="10,7">
+                    <TextBlock Text="Расход воздуха (MAF)" Style="{StaticResource Title}"/>
+                    <TextBlock x:Name="MafText" Text="315 кг/ч"
+                           Style="{StaticResource Value}" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="3">
+                <StackPanel Margin="10,7">
+                    <TextBlock Text="Положение педали" Style="{StaticResource Title}"/>
+                    <TextBlock x:Name="PedalText" Text="28 %"
+                           Style="{StaticResource Value}" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
     </Grid>
 </UserControl>
