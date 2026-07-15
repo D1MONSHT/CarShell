@@ -1,83 +1,50 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using System.Windows;
 
 namespace CarShell
 {
     public partial class App : Application
+
     {
-        public static readonly string UpdateLockDirectory =
-            Path.Combine(
-                Environment.GetFolderPath(
-                    Environment.SpecialFolder.CommonApplicationData),
-                "CarShell");
+        public static string UpdateLockDirectory =>
+           Path.Combine(
+               Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+               "CarShell");
 
-        public static readonly string UpdateLockPath =
+        public static string UpdateLockPath =>
+            Path.Combine(UpdateLockDirectory, "update.lock");
+        private static readonly string LogPath =
             Path.Combine(
-                UpdateLockDirectory,
-                "update.lock");
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "CarShell",
+                "boot.log");
 
-        protected override void OnStartup(
-            StartupEventArgs e)
+        protected override void OnStartup(StartupEventArgs e)
         {
-            try
-            {
-                if (IsUpdateInProgress())
-                {
-                    // CarShell мог автоматически запуститься,
-                    // пока Updater заменяет файлы.
-                    Shutdown(20);
-                    return;
-                }
-            }
-            catch
-            {
-                // Ошибка чтения блокировки не должна
-                // полностью блокировать запуск приложения.
-            }
+            WriteBootLog("App.OnStartup START");
 
             base.OnStartup(e);
+
+            WriteBootLog("App.OnStartup END");
         }
 
-        private static bool IsUpdateInProgress()
+        public static void WriteBootLog(string message)
         {
-            if (!File.Exists(UpdateLockPath))
-            {
-                return false;
-            }
-
             try
             {
-                string lockContent =
-                    File.ReadAllText(UpdateLockPath);
+                string? directory = Path.GetDirectoryName(LogPath);
 
-                if (DateTime.TryParse(
-                        lockContent,
-                        CultureInfo.InvariantCulture,
-                        DateTimeStyles.RoundtripKind,
-                        out DateTime createdAt))
-                {
-                    TimeSpan lockAge =
-                        DateTime.UtcNow -
-                        createdAt.ToUniversalTime();
+                if (!string.IsNullOrWhiteSpace(directory))
+                    Directory.CreateDirectory(directory);
 
-                    // Если блокировка старше 30 минут,
-                    // считаем её оставшейся после сбоя.
-                    if (lockAge > TimeSpan.FromMinutes(30))
-                    {
-                        File.Delete(UpdateLockPath);
-                        return false;
-                    }
-                }
-
-                return true;
+                File.AppendAllText(
+                    LogPath,
+                    $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} | {message}{Environment.NewLine}");
             }
             catch
             {
-                // Если файл существует, но его не получается прочитать,
-                // безопаснее считать, что обновление ещё выполняется.
-                return true;
+                // Лог не должен мешать запуску приложения.
             }
         }
     }

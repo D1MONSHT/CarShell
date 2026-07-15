@@ -16,17 +16,44 @@ namespace CarShell
 
         public MainWindow()
         {
+            App.WriteBootLog("MainWindow constructor START");
+
             InitializeComponent();
+            App.WriteBootLog("InitializeComponent finished");
 
             homePage = new HomePage(this);
+            App.WriteBootLog("HomePage created");
+
             musicPage = new MusicPage(this);
+            App.WriteBootLog("MusicPage created");
+
             navigationPage = new NavigationPage(this);
+            App.WriteBootLog("NavigationPage created");
+
             cameraPage = new CameraPage(this);
+            App.WriteBootLog("CameraPage created");
+
             settingsPage = new SettingsPage(this);
+            App.WriteBootLog("SettingsPage created");
+
             boardPage = new BoardPage(this);
+            App.WriteBootLog("BoardPage created");
+
             errorPage = new ErrorPage(this);
+            App.WriteBootLog("ErrorPage created");
+
             mapsPage = new MapsPage(this);
+            App.WriteBootLog("MapsPage created");
+
             ShowHome();
+
+            Loaded += (_, _) =>
+                App.WriteBootLog("MainWindow LOADED");
+
+            ContentRendered += (_, _) =>
+                App.WriteBootLog("MainWindow CONTENT RENDERED");
+
+            App.WriteBootLog("MainWindow constructor END");
         }
         public void ShowMaps()
         {
