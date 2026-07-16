@@ -24,14 +24,14 @@ namespace CarShell
             homePage = new HomePage(this);
             App.WriteBootLog("HomePage created");
 
-            musicPage = new MusicPage(this);
+           /*usicPage = new MusicPage(this);
             App.WriteBootLog("MusicPage created");
 
             navigationPage = new NavigationPage(this);
             App.WriteBootLog("NavigationPage created");
 
             cameraPage = new CameraPage(this);
-            App.WriteBootLog("CameraPage created");
+            App.WriteBootLog("CameraPage created");*/
 
             settingsPage = new SettingsPage(this);
             App.WriteBootLog("SettingsPage created");
@@ -42,8 +42,8 @@ namespace CarShell
             errorPage = new ErrorPage(this);
             App.WriteBootLog("ErrorPage created");
 
-            mapsPage = new MapsPage(this);
-            App.WriteBootLog("MapsPage created");
+           /*sPage = new MapsPage(this);
+            App.WriteBootLog("MapsPage created");*/
 
             ShowHome();
 
@@ -55,16 +55,16 @@ namespace CarShell
 
             App.WriteBootLog("MainWindow constructor END");
         }
-        public void ShowMaps()
+       /*lic void ShowMaps()
         {
             MainContent.Content = mapsPage;
-        }
+        }*/
         public void ShowHome()
         {
             MainContent.Content = homePage;
         }
 
-        public void ShowMusic()
+       /* void ShowMusic()
         {
             MainContent.Content = musicPage;
         }
@@ -73,12 +73,12 @@ namespace CarShell
         {
             MainContent.Content = navigationPage;
         }
-
+       
         public void ShowCamera()
         {
             MainContent.Content = cameraPage;
         }
-
+       */
         public void ShowSettings()
         {
             MainContent.Content = settingsPage;
@@ -91,11 +91,11 @@ namespace CarShell
         {
             MainContent.Content = errorPage;
         }
-        private void Maps_Click(object sender, RoutedEventArgs e) => ShowMaps();
+       //rivate void Maps_Click(object sender, RoutedEventArgs e) => ShowMaps();
         private void Home_Click(object sender, RoutedEventArgs e) => ShowHome();
-        private void Navigation_Click(object sender, RoutedEventArgs e) => ShowNavigation();
-        private void Music_Click(object sender, RoutedEventArgs e) => ShowMusic();
-        private void Camera_Click(object sender, RoutedEventArgs e) => ShowCamera();
+       //rivate void Navigation_Click(object sender, RoutedEventArgs e) => ShowNavigation();
+        //ivate void Music_Click(object sender, RoutedEventArgs e) => ShowMusic();
+        //ivate void Camera_Click(object sender, RoutedEventArgs e) => ShowCamera();
         private void Settings_Click(object sender, RoutedEventArgs e) => ShowSettings();
         private void Board_Click(object sender, RoutedEventArgs e) => ShowBoard();
         private void Error_Click(object sender, RoutedEventArgs e) => ShowError();
