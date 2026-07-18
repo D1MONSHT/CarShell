@@ -26,10 +26,10 @@ namespace CarShell
 
            /*usicPage = new MusicPage(this);
             App.WriteBootLog("MusicPage created");
-
+*/
             navigationPage = new NavigationPage(this);
             App.WriteBootLog("NavigationPage created");
-
+/*
             cameraPage = new CameraPage(this);
             App.WriteBootLog("CameraPage created");*/
 
@@ -67,12 +67,12 @@ namespace CarShell
        /* void ShowMusic()
         {
             MainContent.Content = musicPage;
-        }
+        }*/
 
         public void ShowNavigation()
         {
             MainContent.Content = navigationPage;
-        }
+        }/*
        
         public void ShowCamera()
         {
@@ -93,7 +93,7 @@ namespace CarShell
         }
        //rivate void Maps_Click(object sender, RoutedEventArgs e) => ShowMaps();
         private void Home_Click(object sender, RoutedEventArgs e) => ShowHome();
-       //rivate void Navigation_Click(object sender, RoutedEventArgs e) => ShowNavigation();
+       private void Navigation_Click(object sender, RoutedEventArgs e) => ShowNavigation();
         //ivate void Music_Click(object sender, RoutedEventArgs e) => ShowMusic();
         //ivate void Camera_Click(object sender, RoutedEventArgs e) => ShowCamera();
         private void Settings_Click(object sender, RoutedEventArgs e) => ShowSettings();
