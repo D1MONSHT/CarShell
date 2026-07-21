@@ -13,6 +13,7 @@ namespace CarShell
         private BoardPage boardPage;
         private ErrorPage errorPage;
         private MapsPage mapsPage;
+        private DiagnosticsPage diagnosticsPage;
 
         public MainWindow()
         {
@@ -41,6 +42,9 @@ namespace CarShell
 
             errorPage = new ErrorPage(this);
             App.WriteBootLog("ErrorPage created");
+
+            diagnosticsPage = new DiagnosticsPage(this);
+            App.WriteBootLog("DiagnosticsPage created");
 
            /*sPage = new MapsPage(this);
             App.WriteBootLog("MapsPage created");*/
@@ -91,6 +95,11 @@ namespace CarShell
         {
             MainContent.Content = errorPage;
         }
+
+        public void ShowDiagnostics()
+        {
+            MainContent.Content = diagnosticsPage;
+        }
        //rivate void Maps_Click(object sender, RoutedEventArgs e) => ShowMaps();
         private void Home_Click(object sender, RoutedEventArgs e) => ShowHome();
        private void Navigation_Click(object sender, RoutedEventArgs e) => ShowNavigation();
@@ -99,9 +108,10 @@ namespace CarShell
         private void Settings_Click(object sender, RoutedEventArgs e) => ShowSettings();
         private void Board_Click(object sender, RoutedEventArgs e) => ShowBoard();
         private void Error_Click(object sender, RoutedEventArgs e) => ShowError();
+        private void Diagnostics_Click(object sender, RoutedEventArgs e) => ShowDiagnostics();
         private void CheckEngineButton_Click(object sender, RoutedEventArgs e)
         {
-            ShowError();
+            ShowDiagnostics();
         }
 
         private async void PlayPause_Click(object sender, RoutedEventArgs e)
