@@ -101,10 +101,9 @@
                                 VerticalAlignment="Top" Grid.RowSpan="1">
 
                         <Button Content="⌂" Click="Home_Click" Style="{StaticResource SideButton}"/>
-<Button Content="1" Click="Navigation_Click" Style="{StaticResource SideButton}"/>
-               
-                     
+                        <Button Content="1" Click="Navigation_Click" Style="{StaticResource SideButton}"/>
                         <Button Content="!" Click="Board_Click" Style="{StaticResource SideButton}"/>
+                        <Button Content="◆" Click="Diagnostics_Click" Style="{StaticResource SideButton}"/>
                         <Button Content="!!" Click="Error_Click" Style="{StaticResource SideButton}"/>
                         <Button Content="⚙" Click="Settings_Click" Style="{StaticResource SideButton}"/>
 

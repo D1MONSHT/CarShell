@@ -1,0 +1,192 @@
+<UserControl x:Class="CarShell.Pages.DiagnosticsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#05070A">
+
+    <UserControl.Resources>
+        <Style x:Key="HeaderText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="21"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <Style x:Key="TabButton" TargetType="Button">
+            <Setter Property="Background" Value="#0B0F14"/>
+            <Setter Property="Foreground" Value="#C5CBD2"/>
+            <Setter Property="BorderBrush" Value="#252B33"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TabButtonActive" TargetType="Button" BasedOn="{StaticResource TabButton}">
+            <Setter Property="Background" Value="#1C3A4A"/>
+            <Setter Property="Foreground" Value="#69D66D"/>
+            <Setter Property="BorderBrush" Value="#3B7A8D"/>
+        </Style>
+
+        <Style x:Key="StatusCard" TargetType="Border">
+            <Setter Property="Background" Value="#0B0F14"/>
+            <Setter Property="BorderBrush" Value="#252B33"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="Margin" Value="0,0,8,8"/>
+        </Style>
+
+        <Style x:Key="ErrorCard" TargetType="Border">
+            <Setter Property="Background" Value="#1A0A0D"/>
+            <Setter Property="BorderBrush" Value="#7F2E35"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <Style x:Key="WarningCard" TargetType="Border">
+            <Setter Property="Background" Value="#1A1408"/>
+            <Setter Property="BorderBrush" Value="#7F6E35"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <Style x:Key="SuccessCard" TargetType="Border">
+            <Setter Property="Background" Value="#0D1A0D"/>
+            <Setter Property="BorderBrush" Value="#2E7F35"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <Style x:Key="StatusLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#C5CBD2"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        </Style>
+
+        <Style x:Key="StatusValue" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,4,0,0"/>
+        </Style>
+
+        <Style x:Key="ErrorCode" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#FF5B61"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <Style x:Key="ErrorDescription" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#E0E4E8"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="0,3,0,0"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="12,7,12,9">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="42"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid>
+            <TextBlock Text="Диагностика" Style="{StaticResource HeaderText}"/>
+            <TextBlock x:Name="ClockText" Text="16:20" Foreground="White"
+                       FontSize="23" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <TextBlock x:Name="StatusIndicatorText" Text="ВСЕ СИСТЕМЫ OK"
+                       Foreground="#69D66D" FontSize="14" FontWeight="SemiBold"
+                       HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        </Grid>
+
+        <!-- Tabs for block selection -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
+            <Button x:Name="MotorButton" Content="🔧 Motor (ME)" 
+                    Click="OnBlockSelected" Style="{StaticResource TabButtonActive}"
+                    Tag="Motor"/>
+            <Button x:Name="AgtButton" Content="⚙ AGT" 
+                    Click="OnBlockSelected" Style="{StaticResource TabButton}"
+                    Tag="AGT"/>
+            <Button x:Name="EscButton" Content="📍 ESC" 
+                    Click="OnBlockSelected" Style="{StaticResource TabButton}"
+                    Tag="ESC"/>
+            <Button x:Name="AbsButton" Content="🛑 ABS" 
+                    Click="OnBlockSelected" Style="{StaticResource TabButton}"
+                    Tag="ABS"/>
+            <Button x:Name="KmbButton" Content="🏎 KMB" 
+                    Click="OnBlockSelected" Style="{StaticResource TabButton}"
+                    Tag="KMB"/>
+            <Button x:Name="EgrButton" Content="🌫 EGR" 
+                    Click="OnBlockSelected" Style="{StaticResource TabButton}"
+                    Tag="EGR"/>
+        </StackPanel>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Margin="0,8,0,0">
+            <StackPanel>
+                <!-- System Status -->
+                <TextBlock x:Name="BlockStatusLabel" Text="Статус системы" Foreground="#C5CBD2" FontSize="13"
+                           FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                <Border Style="{StaticResource StatusCard}">
+                    <StackPanel>
+                        <TextBlock x:Name="BlockNameText" Text="Двигатель" Style="{StaticResource StatusLabel}"/>
+                        <TextBlock x:Name="BlockStatusText" Text="НОРМА"
+                                   Style="{StaticResource StatusValue}" Foreground="#69D66D"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Errors for selected block -->
+                <TextBlock Text="Ошибки блока" Foreground="#C5CBD2" FontSize="13"
+                           FontWeight="SemiBold" Margin="0,12,0,8"/>
+
+                <StackPanel x:Name="BlockErrorsPanel">
+                    <Border Style="{StaticResource SuccessCard}">
+                        <StackPanel>
+                            <TextBlock Text="✓ Ошибок не обнаружено" 
+                                       Foreground="#69D66D" FontSize="12" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Warnings for selected block -->
+                <TextBlock Text="Предупреждения блока" Foreground="#C5CBD2" FontSize="13"
+                           FontWeight="SemiBold" Margin="0,12,0,8"/>
+
+                <StackPanel x:Name="BlockWarningsPanel">
+                    <Border Style="{StaticResource SuccessCard}">
+                        <StackPanel>
+                            <TextBlock Text="✓ Предупреждений нет" 
+                                       Foreground="#69D66D" FontSize="12" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <TextBlock Margin="0,20,0,0"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
