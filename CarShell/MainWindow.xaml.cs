@@ -103,8 +103,8 @@ namespace CarShell
        //rivate void Maps_Click(object sender, RoutedEventArgs e) => ShowMaps();
         private void Home_Click(object sender, RoutedEventArgs e) => ShowHome();
        private void Navigation_Click(object sender, RoutedEventArgs e) => ShowNavigation();
-        //ivate void Music_Click(object sender, RoutedEventArgs e) => ShowMusic();
-        pivate void Camera_Click(object sender, RoutedEventArgs e) => ShowCamera();
+        private void Music_Click(object sender, RoutedEventArgs e) => ShowMusic();
+        //pivate void Camera_Click(object sender, RoutedEventArgs e) => ShowCamera();
         private void Settings_Click(object sender, RoutedEventArgs e) => ShowSettings();
         private void Board_Click(object sender, RoutedEventArgs e) => ShowBoard();
         private void Error_Click(object sender, RoutedEventArgs e) => ShowError();
