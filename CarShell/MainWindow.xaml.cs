@@ -68,7 +68,7 @@ namespace CarShell
             MainContent.Content = homePage;
         }
 
-        void ShowMusic()
+        public void ShowMusic()
         {
             MainContent.Content = musicPage;
         }
