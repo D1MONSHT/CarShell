@@ -270,6 +270,11 @@ namespace CarShell.Pages
                 _ => new SolidColorBrush(Color.FromRgb(180, 185, 192))
             };
         }
+
+        private void None(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
     public sealed class DiagnosticError
