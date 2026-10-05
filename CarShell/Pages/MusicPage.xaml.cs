@@ -15,12 +15,12 @@ namespace CarShell.Pages
             ShowYoutubeMusic();
         }
 
-        private void ResetTabs()
+       /* private void ResetTabs()
         {
             BtnYoutubeMusic.Background = System.Windows.Media.Brushes.Transparent;
             BtnRadioPlayer.Background = System.Windows.Media.Brushes.Transparent;
             BtnCarRadio.Background = System.Windows.Media.Brushes.Transparent;
-        }
+        }*/
 
         private void HidePanels()
         {
@@ -32,15 +32,15 @@ namespace CarShell.Pages
         private void ShowYoutubeMusic()
         {
             HidePanels();
-            ResetTabs();
+         //   ResetTabs();
 
             YoutubeMusicPanel.Visibility = Visibility.Visible;
-            BtnYoutubeMusic.Background = new System.Windows.Media.SolidColorBrush(
-                System.Windows.Media.Color.FromRgb(0, 122, 204)
-            );
+        //    BtnYoutubeMusic.Background = new System.Windows.Media.SolidColorBrush(
+          //      System.Windows.Media.Color.FromRgb(0, 122, 204)
+          //  );
         }
 
-        private void ShowRadioPlayer()
+        /*private void ShowRadioPlayer()
         {
             HidePanels();
             ResetTabs();
@@ -60,9 +60,9 @@ namespace CarShell.Pages
             BtnCarRadio.Background = new System.Windows.Media.SolidColorBrush(
                 System.Windows.Media.Color.FromRgb(0, 122, 204)
             );
-        }
+        }*/
 
-        private void YouTubeMusic_Click(object sender, RoutedEventArgs e)
+       /* private void YouTubeMusic_Click(object sender, RoutedEventArgs e)
         {
             ShowYoutubeMusic();
         }
@@ -75,7 +75,7 @@ namespace CarShell.Pages
         private void CarRadio_Click(object sender, RoutedEventArgs e)
         {
             ShowCarRadio();
-        }
+        }*/
 
         public async Task PlayPause()
         {

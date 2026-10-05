@@ -127,8 +127,7 @@
                             <TextBlock Text="Тормозная система" Style="{StaticResource StatusLabel}"/>
                             <TextBlock x:Name="BrakeStatusText" Text="НОРМА"
                                        Style="{StaticResource StatusValue}" Foreground="#69D66D"/>
-                            <Button Content="Кнопка" Width="100" Height="28" FontSize="12" Margin="0,6,0,0"
-                                    />
+                            
                         </StackPanel>
                     </Border>
                 </UniformGrid>

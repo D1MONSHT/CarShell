@@ -4,44 +4,14 @@
              xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
              Background="#05080D">
 
-    <UserControl.Resources>
-        <Style x:Key="TabButton" TargetType="Button">
-            <Setter Property="Height" Value="64"/>
-            <Setter Property="Margin" Value="8"/>
-            <Setter Property="FontSize" Value="24"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Background" Value="#101923"/>
-            <Setter Property="BorderBrush" Value="#27384A"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border CornerRadius="22"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
-        <Style x:Key="RadioButtonStyle" TargetType="Button" BasedOn="{StaticResource TabButton}">
-            <Setter Property="Height" Value="110"/>
-            <Setter Property="FontSize" Value="28"/>
-        </Style>
-    </UserControl.Resources>
-
-    <Grid Margin="24">
+    <Grid Margin="1">
         <Grid.RowDefinitions>
-            <RowDefinition Height="86"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- Верхние вкладки -->
-        <Grid Grid.Row="0">
+        <!--<Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -65,10 +35,10 @@
                     Content="Радио магнитолы"
                     Click="CarRadio_Click"
                     Style="{StaticResource TabButton}"/>
-        </Grid>
+        </Grid>-->
 
         <!-- Контент -->
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
 
             <!-- YouTube Music -->
             <Border x:Name="YoutubeMusicPanel"
@@ -90,14 +60,6 @@
                     <RowDefinition Height="110"/>
                 </Grid.RowDefinitions>
 
-                <UniformGrid Rows="2" Columns="3">
-                    <Button Content="RMF FM" Style="{StaticResource RadioButtonStyle}"/>
-                    <Button Content="Radio ZET" Style="{StaticResource RadioButtonStyle}"/>
-                    <Button Content="Eska" Style="{StaticResource RadioButtonStyle}"/>
-                    <Button Content="Antyradio" Style="{StaticResource RadioButtonStyle}"/>
-                    <Button Content="Tok FM" Style="{StaticResource RadioButtonStyle}"/>
-                    <Button Content="Open FM" Style="{StaticResource RadioButtonStyle}"/>
-                </UniformGrid>
 
                 <Border Grid.Row="1"
                         Background="#101923"
